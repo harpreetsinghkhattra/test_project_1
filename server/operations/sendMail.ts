@@ -33,8 +33,8 @@ export class SendMail {
             port: 465,
             secure: true,
             auth: {
-                user: 'tt7873441@gmail.com',
-                pass: 'welcome2india'
+                user: 'ttttester102@gmail.com',
+                pass: '872909066'
             }
         });
 
