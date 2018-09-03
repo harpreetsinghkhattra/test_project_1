@@ -400,9 +400,11 @@ export class SendMail {
         }
         smtptransport.sendMail(options, function (err, data) {
             if (err) {
+                console.log(err);
                 cb('err', err);
             }
             if (data) {
+                console.log(data);
                 cb('sent', data);
             }
         });
