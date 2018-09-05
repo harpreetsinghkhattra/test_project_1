@@ -39,9 +39,9 @@ export class SendMail {
         });
 
         var options = {
-            from: 'TestChat<example.com>',
+            from: 'ISHAANVI<example.com>',
             to: obj.email,
-            subject: 'LAWYERUP',
+            subject: 'ISHAANVI',
             html: `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -295,7 +295,6 @@ export class SendMail {
                                                                                 <td align='center' valign='middle' >
                                                                                     <div class="contentEditableContainer contentImageEditable">
                                                                                         <div class="contentEditable" >
-                                                                                            <img src="http://34.223.229.37/imgs/icon.png" alt='Compagnie logo' data-default="placeholder" data-max-width="100" width='100'/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </td>
@@ -360,7 +359,7 @@ export class SendMail {
                                                                         </div>
                                                                         <div class="contentEditableContainer contentTextEditable">
                                                                             <div class="contentEditable" style="font-size:18px; padding: 6px 0; line-height: 16px; margin-top: 20px">
-                                                                                <span style="color:#fff; font-size:18px; margin:10px 0px;   padding-right: 10px;  float: left; width: 46%; text-align: right; ">OTP  :</span>
+                                                                                <span style="color:#fff; font-size:18px; margin:10px 0px;   padding-right: 10px;  float: left; width: 46%; text-align: right; ">Password  :</span>
                                                                                 <span style="color:#eee; font-size:18px; margin:10px 0px; padding-left: 10px; float: left; width: 46%; text-align: left; ">${obj.password}</span>
                                                                             </div>
                                                                         </div>
