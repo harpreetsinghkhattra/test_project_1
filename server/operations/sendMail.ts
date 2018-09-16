@@ -422,15 +422,15 @@ export class SendMail {
             port: 465,
             secure: true,
             auth: {
-                user: 'tt7873441@gmail.com',
-                pass: 'welcome2india'
+                user: 'ttttester102@gmail.com',
+                pass: '872909066'
             }
         });
 
         var options = {
-            from: 'LAWYERUP<example.com>',
+            from: 'ISHAANVI<example.com>',
             to: obj.email,
-            subject: 'LAWYERUP',
+            subject: 'ISHAANVI',
             html: `
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -685,7 +685,6 @@ export class SendMail {
                                                                                 <td align='center' valign='middle' >
                                                                                     <div class="contentEditableContainer contentImageEditable">
                                                                                         <div class="contentEditable" >
-                                                                                            <img src="http://34.223.229.37/imgs/icon.png" alt='Compagnie logo' data-default="placeholder" data-max-width="100" width='100'/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </td>
@@ -813,15 +812,15 @@ export class SendMail {
             port: 465,
             secure: true,
             auth: {
-                user: 'tt7873441@gmail.com',
-                pass: 'welcome2india'
+                user: 'ttttester102@gmail.com',
+                pass: '872909066'
             }
         });
 
         var options = {
-            from: 'LAWYERUP<example.com>',
+            from: 'ISHAANVI<example.com>',
             to: obj.email,
-            subject: 'LAWYERUP',
+            subject: 'ISHAANVI',
             html: `
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -1076,7 +1075,6 @@ export class SendMail {
                                                                                 <td align='center' valign='middle' >
                                                                                     <div class="contentEditableContainer contentImageEditable">
                                                                                         <div class="contentEditable" >
-                                                                                            <img src="http://34.223.229.37/imgs/icon.png" alt='Compagnie logo' data-default="placeholder" data-max-width="100" width='100'/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </td>

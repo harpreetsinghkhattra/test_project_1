@@ -14,16 +14,14 @@ export class CommonJs {
     public VALIDATE_ERROR: string = 'validationErr';
     public VARIFICATION_ERROR: string = 'verificationErr';
     public BOOKING_PRESENT: string = 'bookingPrsent'
-    public LIKE: string = 'like';
-    public UNLIKE: string = "unlike";
-    public VOTE = "vote";
-    public UNVOTE: string = "unVote";
     public BASE_URL: string = "http://localhost:4000/";
     public EMAIL_PRESENT: string = "emailPresent";
     public LOGED_IN: string = "logedIn";
     public LOGED_OUT: string = "logedOut";
     public REQUEST_ACCEPTED: string = "requestAccepted";
     public REQUEST_DECLINED: string = "requestDeclined";
+    public CHANGE: string = "change";
+    public NO_CHANGE: string = "no_change";
     public EPOCH_TIME: number = new Date().getTime()
 
     constructor() {

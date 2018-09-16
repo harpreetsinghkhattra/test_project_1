@@ -15,6 +15,20 @@ router.post('/getUser', (req, res, next) => Auth.userAuth(req, res, next, 'getUs
     })
 });
 
+/** Edit seller profile */
+router.post('/editSellerProfile', (req, res, next) => Auth.userAuth(req, res, next, 'editSellerProfile'), (req, res) => {
+    Operations.editSellerProfile(req.body, (status, response) => {
+        CommonJs.httpResponse(req, res, status, response)
+    });
+});
+
+/** Edit user profile */
+router.post('/editUserProfile', (req, res, next) => Auth.userAuth(req, res, next, 'editUserProfile'), (req, res) => {
+    Operations.editSellerProfile(req.body, (status, response) => {
+        CommonJs.httpResponse(req, res, status, response)
+    });
+});
+
 router.post('/sendFriendRequest', (req, res, next) => Auth.userAuth(req, res, next, 'sendFriendRequest'), (req, res) => {
     Operations.sendFriendRequest(req.body, (status, response) => {
         CommonJs.httpResponse(req, res, status, response);

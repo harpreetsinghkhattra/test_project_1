@@ -19,7 +19,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
-                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0 }).toArray((err, data) => {
+                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0, verificationCode: 1 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
                         obj.salt = data[0].salt ? data[0].salt : 'any';
@@ -90,6 +90,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
+
                 CommonJs.randomPassword(obj.email.toLowerCase(), obj.password, (password, salt) => {
                     collection.find({ email: obj.email.toLowerCase() }).toArray((err, data) => {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -103,18 +104,39 @@ export class Operations {
                                         name: obj.name,
                                         category: obj.category,
                                         buisness_name: obj.buisness_name,
+                                        mobile_number: obj.mobile_number,
                                         buisness_address: obj.buisness_address,
                                         status: 0,
                                         deletedStatus: 0,
                                         userAccessToken: TOKEN,
                                         salt: salt,
-                                        createdTime: new Date().getTime(),
-                                        updatedTime: new Date().getTime()
+                                        createdTime: CommonJSInstance.EPOCH_TIME,
+                                        updatedTime: CommonJSInstance.EPOCH_TIME
                                     }, (err, data) => {
                                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                                         else {
-                                            // var response = data.ops[0];
-                                            this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb);
+
+                                            //Create random password key
+                                            var randomeToken = Math.floor(Math.random() * 1000000) + '';
+                                            randomeToken = randomeToken.length === 6 ? randomeToken : randomeToken + randomeToken.substr(0, 6 - randomeToken.length);
+                                            console.log(randomeToken);
+                                            CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
+                                                var mailSentOpt = {
+                                                    email: obj.email.toLowerCase(),
+                                                    token: randomeToken
+                                                }
+
+                                                collection.update({ email: obj.email.toLowerCase() }, {
+                                                    $set: {
+                                                        verificationToken: token,
+                                                        verificationCode: 0,
+                                                        updatedTime: new Date().getTime()
+                                                    }
+                                                }, (err, data) => {
+                                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                                                    else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
+                                                });
+                                            });
                                         }
                                     });
                                 } else CommonJs.close(client, CommonJSInstance.TOKEN_ERROR, [], cb);
@@ -407,10 +429,175 @@ export class Operations {
                                 }
                             }, (err, data) => {
                                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                                else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                                else this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb);
                             })
                         } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                     })
+                });
+            }
+        })
+    }
+
+    /**
+     * Edit seller profile 
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static editSellerProfile(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, (status) => {
+                    if (status === CommonJSInstance.NO_CHANGE) {
+                        users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            if (data && data.length !== 0) {
+                                users.update({ email: obj.email.toLowerCase() }, {
+                                    $set: {
+                                        userType: obj.userType,
+                                        name: obj.name,
+                                        mobile_number: obj.mobile_number,
+                                        location: obj.location,
+                                        imagePath: obj.imagePath ? CommonJSInstance.BASE_URL + obj.imagePath : data[0].imagePath,
+                                        updatedTime: CommonJSInstance.EPOCH_TIME
+                                    }
+                                }, (err, data) => {
+                                    console.log(data);
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                                    else this.getCollectionData({ email: obj.email.toLowerCase() }, users, { projection: { password: 0, salt: 0 } }, client, cb);
+                                });
+                            } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
+                        });
+                    } else if (status === CommonJSInstance.EMAIL_PRESENT) CommonJs.close(client, CommonJSInstance.EMAIL_PRESENT, [], cb);
+                    else if (status === CommonJSInstance.CHANGE) {
+                        users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            if (data && data.length !== 0) {
+                                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                                    $set: {
+                                        email: obj.email.toLowerCase(),
+                                        userType: obj.userType,
+                                        name: obj.name,
+                                        mobile_number: obj.mobile_number,
+                                        location: obj.location,
+                                        imagePath: obj.imagePath ? CommonJSInstance.BASE_URL + obj.imagePath : data[0].imagePath,
+                                        updatedTime: CommonJSInstance.EPOCH_TIME
+                                    }
+                                }, (err, data) => {
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    else {
+                                        //Create random password key
+                                        var randomeToken = Math.floor(Math.random() * 1000000) + '';
+                                        CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
+                                            var mailSentOpt = {
+                                                email: obj.email,
+                                                token: randomeToken
+                                            }
+
+                                            users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken, email: obj.email.toLowerCase() }, {
+                                                $set: {
+                                                    verificationToken: token,
+                                                    verificationCode: 0,
+                                                    updatedTime: new Date().getTime()
+                                                }
+                                            }, (err, data) => {
+                                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                                                else SendMail.emailVerificationWhileChanginEmail(mailSentOpt, (status, res) => CommonJs.close(client, CommonJSInstance.SUCCESS_WITH_EMAIL_CHANGE, [], cb));
+                                            });
+                                        });
+                                    }
+                                });
+                            } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Edit user profile 
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static editUserProfile(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, (status) => {
+                    if (status === CommonJSInstance.NO_CHANGE) {
+
+                    } else if (status === CommonJSInstance.EMAIL_PRESENT) CommonJs.close(client, CommonJSInstance.EMAIL_PRESENT, [], cb);
+                    else if (status === CommonJSInstance.CHANGE) {
+                        users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            if (data && data.length !== 0) {
+                                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                                    $set: {
+                                        email: obj.email.toLowerCase(),
+                                        userType: obj.userType,
+                                        name: obj.name,
+                                        category: obj.category,
+                                        buisness_name: obj.buisness_name,
+                                        mobile_number: obj.mobile_number,
+                                        buisness_address: obj.buisness_address,
+                                        imagePath: obj.imagePath ? CommonJSInstance.BASE_URL + obj.imagePath : data[0].imagePath,
+                                        updatedTime: CommonJSInstance.EPOCH_TIME
+                                    }
+                                }, (err, data) => {
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    else {
+                                        //Create random password key
+                                        var randomeToken = Math.floor(Math.random() * 1000000) + '';
+                                        CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
+                                            var mailSentOpt = {
+                                                email: obj.email,
+                                                token: randomeToken
+                                            }
+
+                                            users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken, email: obj.email.toLowerCase() }, {
+                                                $set: {
+                                                    verificationToken: token,
+                                                    verificationCode: 0,
+                                                    updatedTime: new Date().getTime()
+                                                }
+                                            }, (err, data) => {
+                                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                                                else SendMail.emailVerificationWhileChanginEmail(mailSentOpt, (status, res) => CommonJs.close(client, CommonJSInstance.SUCCESS_WITH_EMAIL_CHANGE, [], cb));
+                                            });
+                                        });
+                                    }
+                                });
+                            } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Only check for edit user profile
+     */
+    static isEmailPresentInAnotherAccountsExceptCurrentOne(id, email, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+
+                // Check in users
+                users.find({ _id: new ObjectId(id), email: email.toLowerCase() }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length !== 0) cb(CommonJSInstance.NO_CHANGE);
+                    else {
+                        users.find({ email: email.toLowerCase() }).toArray((err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
+                            else cb(CommonJSInstance.CHANGE);
+                        });
+                    }
                 });
             }
         })
