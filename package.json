@@ -29,6 +29,7 @@
     "@angular/router": "^6.0.3",
     "@nguniversal/express-engine": "^6.0.0",
     "@nguniversal/module-map-ngfactory-loader": "^6.0.0",
+    "aws-sdk": "^2.316.0",
     "connect-mongo": "^2.0.1",
     "core-js": "^2.5.4",
     "crypto": "^1.0.1",

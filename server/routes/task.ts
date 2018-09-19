@@ -6,6 +6,14 @@ import * as User from './user';
 import { SendSMS } from '../operations/sendSMS';
 const Nexmo = require('nexmo');
 
+
+var AWS = require('aws-sdk');
+AWS.config.region = 'eu-west-1';
+AWS.config.update({
+    accessKeyId: "AKIA35OGV3YLOZQGGRLI",
+    secretAccessKey: "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",
+});
+
 const router = express.Router();
 const CommonJsInstance = new CommonJs();
 const sendSMS = new SendSMS();
@@ -67,6 +75,67 @@ router.get('/isValidNumber', (req, res) => {
                 else CommonJs.httpResponse(req, res, CommonJsInstance.NOT_VALID, response);
             }
         });
+    } else CommonJs.httpResponse(req, res, CommonJsInstance.NOT_VALID, []);
+});
+
+router.get('/sendMessage', (req, res) => {
+    if (req.query && req.query.mobile_number) {
+        const { mobile_number } = req.query;
+
+        // nexmo.message.sendSms(
+        //     "918729090566", '918729090566', 'yo',
+        //     (err, responseData) => {
+        //         if (err) {
+        //             console.log(err);
+
+        //         } else {
+
+        //             console.dir(responseData);
+
+        //         }
+
+        //     }
+        // );
+
+
+        // var sns = new AWS.SNS();
+        // var params = {
+        //     Message: "your message",
+        //     MessageStructure: 'string',
+        //     PhoneNumber: mobile_number,
+        //     Subject: 'your subject'
+        // };
+
+        // sns.publish(params, function (err, data) {
+        //     if (err) console.log(err, err.stack); // an error occurred
+        //     else console.log(data);           // successful response
+        // });
+
+        // Create SMS Attribute parameter you want to get
+
+        var param = {
+            Message: 'text message', /* required */
+            PhoneNumber: mobile_number,
+            MessageAttributes: {
+                'AWS.SNS.SMS.SMSType': {
+                    'DataType': "String",
+                    "StringValue": "Transactional"
+                }
+            }
+        };
+
+        // Create promise and SNS service object
+        var publishTextPromise = new AWS.SNS({ apiVersion: '2012-10-17' })
+            .publish(param).promise();
+
+        // Handle promise's fulfilled/rejected states
+        publishTextPromise.then(
+            function (data) {
+                console.log("MessageID is " + data.MessageId);
+            }).catch(
+            function (err) {
+                console.error(err, err.stack);
+            });
     } else CommonJs.httpResponse(req, res, CommonJsInstance.NOT_VALID, []);
 });
 
