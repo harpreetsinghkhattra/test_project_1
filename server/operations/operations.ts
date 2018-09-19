@@ -19,17 +19,21 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
-                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0, verificationCode: 1 }).toArray((err, data) => {
+                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
-                        obj.salt = data[0].salt ? data[0].salt : 'any';
-                        CommonJs.randomPassword(obj.salt, obj.password, (password, salt) => {
-                            collection.find({ email: obj.email.toLowerCase(), password: password }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
-                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                                else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
-                                else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
+                        if (data[0] && data[0].verificationCode) {
+                            obj.salt = data[0].salt ? data[0].salt : 'any';
+                            CommonJs.randomPassword(obj.salt, obj.password, (password, salt) => {
+                                collection.find({ email: obj.email.toLowerCase(), password: password }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
+                                    else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
+                                })
                             })
-                        })
+                        } else {
+                            this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0, userAccessToken: 0, _id: 0 } }, client, cb);
+                        }
                     } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                 });
             }
