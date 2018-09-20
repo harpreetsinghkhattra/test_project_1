@@ -3,7 +3,7 @@ import { CommonJs } from './common';
 import { ObjectId, ObjectID } from 'mongodb';
 import { SendMail } from './sendMail';
 import { AppKeys } from '../utils/AppKeys';
-
+import { SendSMS } from './sendSMS';
 const CommonJSInstance = new CommonJs();
 const AppKeysInstance = new AppKeys();
 
@@ -147,6 +147,52 @@ export class Operations {
                             });
                         } else CommonJs.close(client, CommonJSInstance.PRESENT, [], cb);
                     })
+                })
+            }
+        })
+    }
+
+    /**
+     * Resend otp
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static resendOTP(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('users');
+
+                collection.find({ email: obj.email.toLowerCase() }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length !== 0) {
+                        //Create random password key
+                        var randomeToken = Math.floor(Math.random() * 1000000) + '';
+                        randomeToken = randomeToken.length === 6 ? randomeToken : randomeToken + randomeToken.substr(0, 6 - randomeToken.length);
+                        console.log(randomeToken);
+                        CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
+                            var message = `Ishaanvi user's signup request verification code: ${randomeToken}`
+                            var mailSentOpt = {
+                                email: obj.email.toLowerCase(),
+                                token: randomeToken
+                            }
+                            
+                            collection.update({ email: obj.email.toLowerCase() }, {
+                                $set: {
+                                    verificationToken: token,
+                                    verificationCode: 0,
+                                    updatedTime: new Date().getTime()
+                                }
+                            }, (err, d) => {
+                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                                // else SendSMS.sendMessageViaAWS("91" + data[0].mobile_number, message, (status, res) => {
+                                //     console.log(status, res);
+                                //     this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
+                                // });
+                                else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
+                            });
+                        });
+                    } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                 })
             }
         })

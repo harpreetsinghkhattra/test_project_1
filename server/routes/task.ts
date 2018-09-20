@@ -44,6 +44,16 @@ router.post('/sellerSignup', (req, res) => {
     })
 });
 
+router.post('/resendOTP', (req, res) => {
+    CommonJs.validate("resendOTP", req.body, (status, emptyKeys) => {
+        if (status) {
+            Operations.resendOTP(req.body, (status, response) => {
+                CommonJs.httpResponse(req, res, status, response);
+            })
+        } else CommonJs.httpResponse(req, res, CommonJsInstance.VALIDATE_ERROR, emptyKeys);
+    })
+});
+
 /** Verification */
 router.post('/verification', (req, res) => {
     CommonJs.validate("verification", req.body, (status, emptyKeys) => {
@@ -114,7 +124,7 @@ router.get('/sendMessage', (req, res) => {
         // Create SMS Attribute parameter you want to get
 
         var param = {
-            Message: 'text message', /* required */
+            Message: 'harpreet singh khattra', /* required */
             PhoneNumber: mobile_number,
             MessageAttributes: {
                 'AWS.SNS.SMS.SMSType': {

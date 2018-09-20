@@ -8,6 +8,7 @@ module.exports = {
         logout: ["id", "accessToken"],
         sellerSignup: ["category", "business_name", "business_address", "name", "mobile_number", "email", "password", "terms_and_conditions"],
         verification: ["email", "token"],
+        resendOTP: ["email"],
         editSellerProfile: ["id", "accessToken", "category", "business_name", "business_address", "name", "mobile_number", "email"],
         editUserProfile: ["id", "accessToken", "category", "business_name", "business_address", "name", "mobile_number", "email"],
         editUser: ["user_name", "name", "bio", "dob", "user_img", "email", "mobile_number"],
