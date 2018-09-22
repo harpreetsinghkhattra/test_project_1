@@ -2,6 +2,7 @@
 module.exports = {
     routesFields: {
         login: ["email", "password"],
+        loginViaFBAndGmail: ["userId", "email", "name"],
         forgetPassword: ["email"],
         userSignup: ["email", "password", "mobile_number", "terms_and_conditions"],
         resetPassword: ["email", "password"],

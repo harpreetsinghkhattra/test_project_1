@@ -34,6 +34,16 @@ router.post('/userSignup', (req, res) => {
     })
 });
 
+router.post('/loginViaFBAndGmail', (req, res) => {
+    CommonJs.validate("loginViaFBAndGmail", req.body, (status, emptyKeys) => {
+        if (status) {
+            Operations.loginViaFBOrGoogle(req.body, (status, response) => {
+                CommonJs.httpResponse(req, res, status, response);
+            })
+        } else CommonJs.httpResponse(req, res, CommonJsInstance.VALIDATE_ERROR, emptyKeys);
+    })
+});
+
 router.post('/sellerSignup', (req, res) => {
     CommonJs.validate("sellerSignup", req.body, (status, emptyKeys) => {
         if (status) {

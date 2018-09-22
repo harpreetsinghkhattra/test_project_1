@@ -22,7 +22,7 @@ export class Operations {
                 collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
-                        if (data[0] && data[0].verificationCode) {
+                        if (data[0] && data[0].verificationCode === 0) {
                             obj.salt = data[0].salt ? data[0].salt : 'any';
                             CommonJs.randomPassword(obj.salt, obj.password, (password, salt) => {
                                 collection.find({ email: obj.email.toLowerCase(), password: password }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
@@ -104,7 +104,7 @@ export class Operations {
                                     collection.insert({
                                         email: obj.email.toLowerCase(),
                                         password: password,
-                                        userType: obj.userType,
+                                        userType: 1,
                                         name: obj.name,
                                         category: obj.category,
                                         business_name: obj.business_name,
@@ -153,6 +153,49 @@ export class Operations {
     }
 
     /**
+     * Login via facebook or google
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static loginViaFBOrGoogle(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('users');
+
+                collection.find({ email: obj.email.toLowerCase() }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length === 0) {
+                        CommonJs.generateToken(obj.email.toLowerCase(), (TOKEN, salt) => {
+                            if (TOKEN) {
+                                collection.insert({
+                                    email: obj.email.toLowerCase(),
+                                    userType: 2,
+                                    socialMediauser: 1,
+                                    imageUrl: obj.imageUrl,
+                                    userId: obj.userId,
+                                    name: obj.name,
+                                    status: 0,
+                                    deletedStatus: 0,
+                                    userAccessToken: TOKEN,
+                                    salt: salt,
+                                    createdTime: CommonJSInstance.EPOCH_TIME,
+                                    updatedTime: CommonJSInstance.EPOCH_TIME
+                                }, (err, data) => {
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    else {
+                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { salt: 0 } }, client, cb);
+                                    }
+                                });
+                            } else CommonJs.close(client, CommonJSInstance.TOKEN_ERROR, [], cb);
+                        });
+                    } else this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { salt: 0 } }, client, cb);
+                })
+            }
+        })
+    }
+
+    /**
      * Resend otp
      * @param {*object} obj 
      * @param {*function} cb 
@@ -171,12 +214,12 @@ export class Operations {
                         randomeToken = randomeToken.length === 6 ? randomeToken : randomeToken + randomeToken.substr(0, 6 - randomeToken.length);
                         console.log(randomeToken);
                         CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
-                            var message = `Ishaanvi user's signup request verification code: ${randomeToken}`
+                            var message = `ISHAANVI verification code: ${randomeToken}`
                             var mailSentOpt = {
                                 email: obj.email.toLowerCase(),
                                 token: randomeToken
                             }
-                            
+
                             collection.update({ email: obj.email.toLowerCase() }, {
                                 $set: {
                                     verificationToken: token,
@@ -394,7 +437,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
-                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0 }).toArray((err, data) => {
+                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0, socialMediauser: { $ne: 1 } }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
 
