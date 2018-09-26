@@ -126,6 +126,7 @@ export class Operations {
                                             randomeToken = randomeToken.length === 6 ? randomeToken : randomeToken + randomeToken.substr(0, 6 - randomeToken.length);
                                             console.log(randomeToken);
                                             CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
+                                                var message = `ISHAANVI verification code: ${randomeToken}`
                                                 var mailSentOpt = {
                                                     email: obj.email.toLowerCase(),
                                                     token: randomeToken
@@ -139,7 +140,11 @@ export class Operations {
                                                     }
                                                 }, (err, data) => {
                                                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                                                    else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
+                                                    else SendSMS.sendMessageViaAWS("91" + data[0].mobile_number, message, (status, res) => {
+                                                        console.log(status, res);
+                                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
+                                                    });
+                                                    // else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
                                                 });
                                             });
                                         }
@@ -229,11 +234,11 @@ export class Operations {
                                 }
                             }, (err, d) => {
                                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                                // else SendSMS.sendMessageViaAWS("91" + data[0].mobile_number, message, (status, res) => {
-                                //     console.log(status, res);
-                                //     this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
-                                // });
-                                else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
+                                else SendSMS.sendMessageViaAWS("91" + data[0].mobile_number, message, (status, res) => {
+                                    console.log(status, res);
+                                    this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
+                                });
+                                // else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
                             });
                         });
                     } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
