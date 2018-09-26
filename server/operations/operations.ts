@@ -61,7 +61,7 @@ export class Operations {
                                         email: obj.email.toLowerCase(),
                                         password: password,
                                         userType: 2,
-                                        mobileNumber: obj.mobile_number,
+                                        mobile_number: obj.mobile_number,
                                         termsAndConditions: obj.terms_and_conditions,
                                         status: 0,
                                         deletedStatus: 0,
@@ -140,7 +140,7 @@ export class Operations {
                                                     }
                                                 }, (err, data) => {
                                                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                                                    else SendSMS.sendMessageViaAWS("91" + data[0].mobile_number, message, (status, res) => {
+                                                    else SendSMS.sendMessageViaAWS("91" + obj.mobile_number, message, (status, res) => {
                                                         console.log(status, res);
                                                         this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
                                                     });
