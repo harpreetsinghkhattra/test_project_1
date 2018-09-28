@@ -13,7 +13,7 @@ enableProdMode();
 
 const app = express();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 const DIST_FOLDER = join(process.cwd(), 'dist');
 
 const { AppServerModuleNgFactory, LAZY_MODULE_MAP } = require('./dist/server/main');
