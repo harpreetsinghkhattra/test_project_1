@@ -547,22 +547,22 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, (status) => {
+                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, obj.mobile_number, (status) => {
                     if (status === CommonJSInstance.NO_CHANGE) {
                         users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                             if (data && data.length !== 0) {
-                                users.update({ email: obj.email.toLowerCase() }, {
+                                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
-                                        userType: obj.userType,
                                         name: obj.name,
-                                        mobile_number: obj.mobile_number,
-                                        location: obj.location,
+                                        email: obj.email.toLowerCase(),
+                                        category: obj.category,
+                                        business_name: obj.business_name,
+                                        business_address: obj.business_address,
                                         imagePath: obj.imagePath ? CommonJSInstance.BASE_URL + obj.imagePath : data[0].imagePath,
                                         updatedTime: CommonJSInstance.EPOCH_TIME
                                     }
                                 }, (err, data) => {
-                                    console.log(data);
                                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
                                     else this.getCollectionData({ email: obj.email.toLowerCase() }, users, { projection: { password: 0, salt: 0 } }, client, cb);
                                 });
@@ -576,10 +576,11 @@ export class Operations {
                                 users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
                                         email: obj.email.toLowerCase(),
-                                        userType: obj.userType,
                                         name: obj.name,
+                                        category: obj.category,
+                                        business_name: obj.business_name,
                                         mobile_number: obj.mobile_number,
-                                        location: obj.location,
+                                        business_address: obj.business_address,
                                         imagePath: obj.imagePath ? CommonJSInstance.BASE_URL + obj.imagePath : data[0].imagePath,
                                         updatedTime: CommonJSInstance.EPOCH_TIME
                                     }
@@ -588,6 +589,8 @@ export class Operations {
                                     else {
                                         //Create random password key
                                         var randomeToken = Math.floor(Math.random() * 1000000) + '';
+                                        randomeToken = randomeToken.length === 6 ? randomeToken : randomeToken + randomeToken.substr(0, 6 - randomeToken.length);
+                                        
                                         CommonJs.randomPassword(obj.email.toLowerCase(), randomeToken, (token, salt) => {
                                             var mailSentOpt = {
                                                 email: obj.email,
@@ -602,7 +605,7 @@ export class Operations {
                                                 }
                                             }, (err, data) => {
                                                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                                                else SendMail.emailVerificationWhileChanginEmail(mailSentOpt, (status, res) => CommonJs.close(client, CommonJSInstance.SUCCESS_WITH_EMAIL_CHANGE, [], cb));
+                                                else SendMail.emailVerificationWhileChanginEmail(mailSentOpt, (status, res) => CommonJs.close(client, CommonJSInstance.SUCCESS_WITH_MOBILE_CHANGE, [], cb));
                                             });
                                         });
                                     }
@@ -625,7 +628,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, (status) => {
+                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, obj.mobile_number, (status) => {
                     if (status === CommonJSInstance.NO_CHANGE) {
 
                     } else if (status === CommonJSInstance.EMAIL_PRESENT) CommonJs.close(client, CommonJSInstance.EMAIL_PRESENT, [], cb);
@@ -680,21 +683,26 @@ export class Operations {
     /**
      * Only check for edit user profile
      */
-    static isEmailPresentInAnotherAccountsExceptCurrentOne(id, email, cb) {
+    static isEmailPresentInAnotherAccountsExceptCurrentOne(id, email, mobile_number, cb) {
         Connection.connect((err, db, client) => {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
 
                 // Check in users
-                users.find({ _id: new ObjectId(id), email: email.toLowerCase() }).toArray((err, data) => {
+                users.find({ _id: new ObjectId(id), email: email.toLowerCase(), mobile_number }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) cb(CommonJSInstance.NO_CHANGE);
                     else {
-                        users.find({ email: email.toLowerCase() }).toArray((err, data) => {
+                        users.find({ mobile_number }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
-                            else cb(CommonJSInstance.CHANGE);
+                            if (data && data.length !== 0) {
+                                users.find({ email: email.toLowerCase() }).toArray((err, data) => {
+                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
+                                    else cb(CommonJSInstance.NO_CHANGE);
+                                });
+                            } else cb(CommonJSInstance.CHANGE);
                         });
                     }
                 });

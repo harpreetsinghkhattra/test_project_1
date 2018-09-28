@@ -20,10 +20,6 @@ export class SendSMS {
 
     static sendMessageViaAWS(to: string, msg: string, cb) {
         AWS.config.region = 'eu-west-1';
-        AWS.config.update({
-            accessKeyId: "AKIA35OGV3YLOZQGGRLI",
-            secretAccessKey: "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",
-        });
         
         var param = {
             Message: msg,

@@ -9,10 +9,6 @@ const Nexmo = require('nexmo');
 
 var AWS = require('aws-sdk');
 AWS.config.region = 'eu-west-1';
-AWS.config.update({
-    accessKeyId: "AKIA35OGV3YLOZQGGRLI",
-    secretAccessKey: "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",
-});
 
 const router = express.Router();
 const CommonJsInstance = new CommonJs();

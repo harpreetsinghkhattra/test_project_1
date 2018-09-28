@@ -6,6 +6,7 @@ export class CommonJs {
     public NOT_VALID: string = 'notValid';
     public SUCCESS: string = 'success';
     public SUCCESS_WITH_EMAIL_CHANGE: string = 'successWithEmailChange';
+    public SUCCESS_WITH_MOBILE_CHANGE: string = 'successWithMobileChange';
     public ERROR: string = 'err';
     public PRESENT: string = 'present';
     public NOVALUE: string = 'noValue';
@@ -187,6 +188,17 @@ export class CommonJs {
                         code: 1,
                         data: response,
                         message: "SuccessWithEmailChange",
+                        emptyKeys: null,
+                        error: false
+                    })
+                break;
+            case 'successWithMobileChange':
+                res.status(200)
+                    .json({
+                        status: 200,
+                        code: 1,
+                        data: response,
+                        message: "SuccessWithMobileChange",
                         emptyKeys: null,
                         error: false
                     })
