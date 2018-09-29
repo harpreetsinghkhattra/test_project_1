@@ -11,7 +11,7 @@ module.exports = {
         verification: ["email", "token"],
         resendOTP: ["email"],
         editSellerProfile: ["id", "accessToken", "category", "business_name", "business_address", "name", "mobile_number", "email"],
-        editUserProfile: ["id", "accessToken", "category", "business_name", "business_address", "name", "mobile_number", "email"],
+        editUserProfile: ["id", "accessToken", "name", "mobile_number", "email", "location"],
         editUser: ["user_name", "name", "bio", "dob", "user_img", "email", "mobile_number"],
         getUser: ["id", "accessToken"],
         sendFriendRequest: ["id", "accessToken", "uid", "fid"],

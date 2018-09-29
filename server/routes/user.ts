@@ -24,7 +24,7 @@ router.post('/editSellerProfile', (req, res, next) => Auth.userAuth(req, res, ne
 
 /** Edit user profile */
 router.post('/editUserProfile', (req, res, next) => Auth.userAuth(req, res, next, 'editUserProfile'), (req, res) => {
-    Operations.editSellerProfile(req.body, (status, response) => {
+    Operations.editUserProfile(req.body, (status, response) => {
         CommonJs.httpResponse(req, res, status, response)
     });
 });

@@ -436,6 +436,42 @@ export class CommonJs {
                     emptyKeys: [],
                     error: false
                 };
+            case "logedIn":
+                return ({
+                    code: 1,
+                    status: 200,
+                    data: response,
+                    message: "LogedIn",
+                    emptyKeys: [],
+                    error: false
+                })
+            case "logedOut":
+                return ({
+                    code: 1,
+                    status: 200,
+                    data: response,
+                    message: "LogedOut",
+                    emptyKeys: [],
+                    error: false
+                });
+            case 'successWithEmailChange':
+                return ({
+                    status: 200,
+                    code: 1,
+                    data: response,
+                    message: "SuccessWithEmailChange",
+                    emptyKeys: null,
+                    error: false
+                });
+            case 'successWithMobileChange':
+                return ({
+                    status: 200,
+                    code: 1,
+                    data: response,
+                    message: "SuccessWithMobileChange",
+                    emptyKeys: null,
+                    error: false
+                });
             default:
                 return {
                     code: 1,

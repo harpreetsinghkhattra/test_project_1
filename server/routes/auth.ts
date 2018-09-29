@@ -13,4 +13,16 @@ export class Auth {
             } else CommonJs.httpResponse(req, res, CommonJsInstance.VALIDATE_ERROR, emptyKeys);
         });
     }
+
+    static authUsingSocket(key, data, next) {
+        console.log(typeof data);
+        CommonJs.validate(key, data, (status, emptyKeys) => {
+            if (status) {
+                Operations.isUserLoggedIn(data, (status, response) => {
+                    if (status === CommonJsInstance.LOGED_IN) next(status, response);
+                    else next(status, response);
+                })
+            } else next(CommonJsInstance.VALIDATE_ERROR, emptyKeys);
+        });
+    }
 }

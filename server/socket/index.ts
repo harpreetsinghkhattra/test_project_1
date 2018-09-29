@@ -1,5 +1,6 @@
 import { UserData } from './user.data.interface';
 import { Chat } from './chat';
+import { User } from './user';
 
 export class Index {
     public IO: any;
@@ -15,6 +16,8 @@ export class Index {
 
     init() {
         this.IO.on('connection', (socket) => {
+            console.log(socket.id);
+            
             socket.on('/socket/api/saveUser', (data) => {
                 if (this.usersList.findIndex((item) => item.socketId === socket.id) === -1) this.usersList.push({ socketId: socket.id, userId: socket.id });
                 this.IO.emit('/socket/api/updateUserList', { data: this.usersList });
@@ -23,6 +26,10 @@ export class Index {
             /** Initialize chat sockets */
             const chatInstance = new Chat(socket, this.IO);
             chatInstance.chatInit();
+
+            /** Initialize user sockets */
+            const userSocketInstance = new User(socket, this.IO);
+            userSocketInstance.userInit();
             
             /** Disconnect user while disconnecting */
             socket.on('disconnect', (data) => {
