@@ -1,6 +1,7 @@
 import { UserData } from './user.data.interface';
 import { Chat } from './chat';
 import { User } from './user';
+import { Product } from './product';
 
 export class Index {
     public IO: any;
@@ -30,6 +31,9 @@ export class Index {
             /** Initialize user sockets */
             const userSocketInstance = new User(socket, this.IO);
             userSocketInstance.userInit();
+
+            const productInstance = new Product(socket, this.IO);
+            productInstance.userInit();
             
             /** Disconnect user while disconnecting */
             socket.on('disconnect', (data) => {

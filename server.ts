@@ -15,6 +15,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const DIST_FOLDER = join(process.cwd(), 'dist');
+const SERVER_STATIC_FOLDER = join(process.cwd(), 'server');
 
 const { AppServerModuleNgFactory, LAZY_MODULE_MAP } = require('./dist/server/main');
 
@@ -30,6 +31,7 @@ app.engine('html', ngExpressEngine({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/public', express.static(join(SERVER_STATIC_FOLDER, 'public')));
 app.get('*.*', express.static(join(DIST_FOLDER, 'isshanvi')));
 
 app.set('view engine', 'html');

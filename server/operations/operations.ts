@@ -648,6 +648,29 @@ export class Operations {
     }
 
     /**
+     * Edit profile image
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static editProfileImage(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                    $set: {
+                        imageUrl: obj.imagePath,
+                        updatedTime: CommonJSInstance.EPOCH_TIME
+                    }
+                }, (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                    else this.getCollectionData({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, users, { projection: { password: 0, salt: 0 } }, client, cb);
+                });
+            }
+        });
+    }
+
+    /**
      * Only check for edit user profile
      */
     static isEmailPresentInAnotherAccountsExceptCurrentOne(id, email, mobile_number, cb) {

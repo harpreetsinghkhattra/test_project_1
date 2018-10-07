@@ -3,7 +3,11 @@ import { Operations } from '../operations/operations';
 import { CommonJs } from '../operations/common';
 import { Auth } from './auth';
 import * as User from './user';
+import * as Media from './media';
+import * as UploadProductFiles from './uploadProductFiles';
+
 import { SendSMS } from '../operations/sendSMS';
+
 const Nexmo = require('nexmo');
 
 
@@ -188,5 +192,11 @@ router.post('/logout', (req, res) => {
 
 /** User */
 router.use('/', User);
+
+/** Media */
+router.use('/', Media);
+
+/** Upload product files */
+router.use('/', UploadProductFiles);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const CommonJsInstance = new CommonJs();
 export class User {
     socket: any;
     IO: any;
-    constructor(socket, io) {
+    constructor(socket, io) { 
         this.socket = socket;
         this.IO = io;
     }
@@ -26,7 +26,7 @@ export class User {
             (data: GetUserRequest) => Auth.authUsingSocket('getUser', data, (status, response) => {
                 if (status === CommonJsInstance.LOGED_IN) {
                     Operations.getUserData(data, (status, response) => {
-                        this.socket.emit('/socket/api/response/getUser', CommonJs.socketResponse(status, response));
+                        this.socket.emit('/socket/api/response/getUser', CommonJs.socketResponse(status, response)); 
                     })
                 } else this.socket.emit('/socket/api/response/getUser', CommonJs.socketResponse(status, response));
             }));
