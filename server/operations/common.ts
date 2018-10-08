@@ -15,7 +15,7 @@ export class CommonJs {
     public VALIDATE_ERROR: string = 'validationErr';
     public VARIFICATION_ERROR: string = 'verificationErr';
     public BOOKING_PRESENT: string = 'bookingPrsent'
-    public BASE_URL: string = "http://13.127.188.164:3000/";
+    public BASE_URL: string = "http://13.127.188.164/";
     public EMAIL_PRESENT: string = "emailPresent";
     public LOGED_IN: string = "logedIn";
     public LOGED_OUT: string = "logedOut";
