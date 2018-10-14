@@ -18,6 +18,8 @@ module.exports = {
         addProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType"],
         editProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType", "status", "deletedStatus"],
         uploadProductFiles: ["id", "accessToken", "itemCode", "images"],
+        getUserProducts: ["id", "accessToken"],
+        getProduct: ["id", "accessToken", "itemCode"],
         finalConfirmationOfProduct: ["id", "accessToken", "itemCode"],
         sendFriendRequest: ["id", "accessToken", "uid", "fid"],
         acceptFriendRequest: ["id", "accessToken", "status", "request_id", "uid", "fid"],

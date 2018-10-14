@@ -18,6 +18,8 @@ export class Product {
     userInit() {
         this.addProduct();
         this.editProduct();
+        this.getProducts();
+        this.getProduct();
     }
 
     /** Add product */
@@ -41,6 +43,30 @@ export class Product {
                         this.socket.emit('/socket/api/response/editProduct', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/editProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get products */
+    getProducts() {
+        this.socket.on('/socket/api/getUserProducts',
+            (data) => Auth.authUsingSocket('getUserProducts', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getProducts(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getUserProducts', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getUserProducts', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get product */
+    getProduct() {
+        this.socket.on('/socket/api/getProduct',
+            (data) => Auth.authUsingSocket('getProduct', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getProduct', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getProduct', CommonJs.socketResponse(status, response));
             }));
     }
 }

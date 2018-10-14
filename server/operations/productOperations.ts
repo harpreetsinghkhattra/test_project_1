@@ -105,6 +105,48 @@ export class ProductOperations {
     }
 
     /**
+     * Get products
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getProducts(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('products');
+                const { id, accessToken } = obj;
+
+                collection.find({ userId: new ObjectId(obj.id) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);
+                })
+            }
+        })
+    }
+
+    /**
+     * Get product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('products');
+                const { id, accessToken, itemCode } = obj;
+
+                collection.find({ userId: new ObjectId(obj.id), itemCode: itemCode.toLowerCase() }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
+                    else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);
+                })
+            }
+        })
+    }
+
+    /**
      * Get collection data
      * @param {*object} obj 
      * @param {*function} cb 
