@@ -20,7 +20,7 @@ export class ProductOperations {
             else {
                 var collection = db.collection('products');
 
-                const { id, accessToken, name, description, category, itemCode, price } = obj;
+                const { id, accessToken, name, description, category, itemCode, price, discount, size, color, material, occasion, type, selectType } = obj;
 
                 collection.find({ userId: new ObjectId(obj.id), itemCode: itemCode.toLowerCase() }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -32,6 +32,13 @@ export class ProductOperations {
                             description,
                             category,
                             price,
+                            discount,
+                            size,
+                            color,
+                            material,
+                            occasion,
+                            type,
+                            selectType,
                             status: 0,
                             deletedStatus: 0,
                             createdTime: new Date().getTime(),
@@ -60,7 +67,7 @@ export class ProductOperations {
             else {
                 var collection = db.collection('products');
 
-                const { id, accessToken, name, description, category, itemCode, price, status, deletedStatus } = obj;
+                const { id, accessToken, name, description, category, itemCode, price, discount, size, color, material, occasion, type, selectType, status, deletedStatus } = obj;
 
                 collection.find({ userId: new ObjectId(obj.id), itemCode: itemCode.toLowerCase() }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -73,6 +80,13 @@ export class ProductOperations {
                                     description,
                                     category,
                                     price,
+                                    discount,
+                                    size,
+                                    color,
+                                    material,
+                                    occasion,
+                                    type,
+                                    selectType,
                                     status,
                                     deletedStatus,
                                     updatedTime: new Date().getTime()
