@@ -174,6 +174,7 @@ export class ProductOperations {
                 products.update({ userId: new ObjectId(id), itemCode }, {
                     $set: {
                         images,
+                        status: 1,
                         updatedTime: CommonJSInstance.EPOCH_TIME
                     }
                 }, (err, data) => {
