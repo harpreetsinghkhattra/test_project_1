@@ -169,12 +169,12 @@ export class ProductOperations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var products = db.collection('products');
-                const { id, itemCode, images } = obj;
+                const { id, itemCode, images, status } = obj;
 
                 products.update({ userId: new ObjectId(id), itemCode }, {
                     $set: {
                         images,
-                        status: 1,
+                        status,
                         updatedTime: CommonJSInstance.EPOCH_TIME
                     }
                 }, (err, data) => {

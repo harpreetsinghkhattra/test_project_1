@@ -17,7 +17,7 @@ module.exports = {
         getUser: ["id", "accessToken"],
         addProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType"],
         editProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType", "status", "deletedStatus"],
-        uploadProductFiles: ["id", "accessToken", "itemCode", "images"],
+        uploadProductFiles: ["id", "accessToken", "itemCode", "images", "status"],
         getUserProducts: ["id", "accessToken"],
         getProduct: ["id", "accessToken", "itemCode"],
         finalConfirmationOfProduct: ["id", "accessToken", "itemCode"],
