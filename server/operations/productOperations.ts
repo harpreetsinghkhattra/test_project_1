@@ -116,7 +116,7 @@ export class ProductOperations {
                 var collection = db.collection('products');
                 const { id, accessToken } = obj;
 
-                collection.find({ userId: new ObjectId(obj.id) }).toArray((err, data) => {
+                collection.find({ userId: new ObjectId(obj.id) }).sort({ $natural: -1 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
                     else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);

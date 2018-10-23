@@ -1,0 +1,37 @@
+{
+	"id": "5b9e52889c3c9129a01aee59",
+    "accessToken": "00c6da5c257b6efa5a27aa5e9350a79d",
+    "category": "test",
+    "business_name": "test",
+    "business_address": "test",
+    "name": "test test",
+    "mobile_number": "1234567890",
+    "email": "test109@gmail.com",
+    "address": "test test",
+    location: {
+               "lat" : 60.3231176,
+               "lng" : 76.867772
+            }
+}
+
+
+
+
+{
+	"id": "5b9e52889c3c9129a01aee59",
+    "accessToken": "00c6da5c257b6efa5a27aa5e9350a79d",
+    "name": "hello one",
+    "mobile_number": "8729090566",
+  	"email": "test1010@gmail.com",
+    "address": "test test",
+    location: {
+               "lat" : 30.3231176,
+               "lng" : 76.867772
+            }
+}
+
+
+"location" : {
+               "lat" : 30.3231176,
+               "lng" : 76.867772
+            }

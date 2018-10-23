@@ -110,6 +110,8 @@ export class Operations {
                                         category: obj.category,
                                         business_name: obj.business_name,
                                         mobile_number: obj.mobile_number,
+                                        address: obj.address,
+                                        location: obj.location,
                                         business_address: obj.business_address,
                                         status: 0,
                                         deletedStatus: 0,
@@ -547,7 +549,8 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, obj.mobile_number, (status) => {
+                this.isEmailPresentInAnotherAccountsExceptCurrentOneSellerUser(obj.id, obj.email, obj.mobile_number, (status) => {
+                    console.log("status ====================> ", status);
                     if (status === CommonJSInstance.NO_CHANGE) {
                         users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -558,6 +561,8 @@ export class Operations {
                                         email: obj.email.toLowerCase(),
                                         category: obj.category,
                                         business_name: obj.business_name,
+                                        address: obj.address,
+                                        location: obj.location,
                                         business_address: obj.business_address,
                                         updatedTime: CommonJSInstance.EPOCH_TIME
                                     }
@@ -579,6 +584,8 @@ export class Operations {
                                         category: obj.category,
                                         business_name: obj.business_name,
                                         mobile_number: obj.mobile_number,
+                                        address: obj.address,
+                                        location: obj.location,
                                         business_address: obj.business_address,
                                         updatedTime: CommonJSInstance.EPOCH_TIME
                                     }
@@ -633,6 +640,7 @@ export class Operations {
                                 email: obj.email.toLowerCase(),
                                 mobile_number: obj.mobile_number,
                                 location: obj.location,
+                                address: obj.address,
                                 name: obj.name,
                                 updatedTime: CommonJSInstance.EPOCH_TIME
                             }
@@ -680,19 +688,44 @@ export class Operations {
                 var users = db.collection('users');
 
                 // Check in users
+                users.find({ _id: new ObjectId(id), email: email.toLowerCase() }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length !== 0) cb(CommonJSInstance.NO_CHANGE);
+                    else {
+                        users.find({ email: email.toLowerCase(), _id: { $ne: new ObjectId(id) } }).toArray((err, data) => {
+                            console.log(data);
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
+                            else cb(CommonJSInstance.NO_CHANGE);
+                        });
+                    }
+                });
+            }
+        })
+    }
+
+    /**
+     * Only check for edit user profile
+     */
+    static isEmailPresentInAnotherAccountsExceptCurrentOneSellerUser(id, email, mobile_number, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+
+                // Check in users
                 users.find({ _id: new ObjectId(id), email: email.toLowerCase(), mobile_number }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) cb(CommonJSInstance.NO_CHANGE);
                     else {
-                        users.find({ mobile_number }).toArray((err, data) => {
+                        users.find({ email: email.toLowerCase(), _id: { $ne: new ObjectId(id) } }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            if (data && data.length !== 0) {
-                                users.find({ email: email.toLowerCase() }).toArray((err, data) => {
-                                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                                    if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
-                                    else cb(CommonJSInstance.NO_CHANGE);
-                                });
-                            } else cb(CommonJSInstance.CHANGE);
+                            if (data && data.length !== 0) cb(CommonJSInstance.EMAIL_PRESENT);
+                            else users.find({ _id: new ObjectId(id), mobile_number }).toArray((err, data) => {
+                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                if (data && data.length !== 0) cb(CommonJSInstance.NO_CHANGE);
+                                else cb(CommonJSInstance.CHANGE);
+                            });
                         });
                     }
                 });
