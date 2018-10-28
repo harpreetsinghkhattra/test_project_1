@@ -788,3 +788,86 @@ export class Operations {
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             isShown: { $ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ] }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     { $sample: { size: 6 } },
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     { $sort : { age : -1, posts: 1 } }
+// ]);
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             isShown: { $or: [{$ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ]}, {$lt: [100, 99]}] }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     { $sample: { size: 6 } },
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] },
+//                              { $eq: [ "$category",  "clothes" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     { $sort : { age : -1, posts: 1 } }
+// ]);
