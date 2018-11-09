@@ -23,6 +23,7 @@ module.exports = {
         finalConfirmationOfProduct: ["id", "accessToken", "itemCode"],
         sendFriendRequest: ["id", "accessToken", "uid", "fid"],
         acceptFriendRequest: ["id", "accessToken", "status", "request_id", "uid", "fid"],
-        getFriendsList: ["id", "accessToken"]
+        getFriendsList: ["id", "accessToken"],
+        getHomeItems: ["id", "accessToken", "category"]
     }
 }

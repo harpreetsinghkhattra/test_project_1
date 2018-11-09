@@ -20,6 +20,7 @@ export class Product {
         this.editProduct();
         this.getProducts();
         this.getProduct();
+        this.getHomeItems();
     }
 
     /** Add product */
@@ -67,6 +68,18 @@ export class Product {
                         this.socket.emit('/socket/api/response/getProduct', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/getProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get home items */
+    getHomeItems() {
+        this.socket.on('/socket/api/getHomeItems',
+            (data) => Auth.authUsingSocket('getHomeItems', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    Operations.getHomeItems(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getHomeItems', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getHomeItems', CommonJs.socketResponse(status, response));
             }));
     }
 }

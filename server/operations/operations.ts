@@ -474,6 +474,80 @@ export class Operations {
     }
 
     /**
+     * Get list of items in home page
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getHomeItems(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { category } = obj;
+
+                users.aggregate([
+                    {
+                        $project: {
+                            _id: 1,
+                            itemCode: 1,
+                            userId: 1,
+                            isShown: { $or: [{ $ne: [{ $indexOfArray: [[], "$_id"] }, -1] }, { $lt: [100, 99] }] }
+                        }
+                    },
+                    { $match: { isShown: false } },
+                    {
+                        $lookup: {
+                            "from": "products",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            category === 'all' ?
+                                                [
+                                                    { $eq: ["$userId", "$$idd"] },
+                                                ]
+                                                :
+                                                [
+                                                    { $eq: ["$userId", "$$idd"] },
+                                                    { $eq: ["$category", category] }
+                                                ]
+                                        }
+                                    }
+                                },
+                                { $sort: { createdTime: -1 } },
+                                { $limit: 6 }
+                            ],
+                            "as": "items"
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            items: 1,
+                            itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+                        }
+                    },
+                    { $sort: { itemsCount: -1 } },
+                    { $match: { itemsCount: { $gte: 1 } } },
+                    { $limit: 6 },
+                    { $sample: { size: 6 } }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        })
+    }
+
+
+    /**
      * Reset password
      * @param {*object} obj 
      * @param {*function} cb 
@@ -870,4 +944,170 @@ export class Operations {
 //         }
 //     }, 
 //     { $sort : { age : -1, posts: 1 } }
+// ]);
+
+
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             isShown: { $or: [{$ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ]}, {$lt: [100, 99]}] }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] },
+//                              { $eq: [ "$category",  "suits" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     {
+//         $project:{
+//             _id: 1,
+//             items: 1,
+//             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+//         }
+//     },
+//     { $sort : {  itemsCount: -1 } },
+//     { $match: { itemsCount: { $gte: 1 } }},
+//     { $limit: 6 },
+//     { $sample: { size: 6 } }
+// ]);
+
+// db.getCollection('users').createIndex( { "location": "2dsphere" } );
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "calculated",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             calculated: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] },
+//                              { $eq: [ "$category",  "suits" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     {
+//         $project:{
+//             _id: 1,
+//             items: 1,
+//             calculated: 1,
+//             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+//         }
+//     },
+//     { $sort : {  itemsCount: -1 } },
+//     { $match: { itemsCount: { $gte: 1 } }},
+//     { $limit: 6 },
+//     { $sample: { size: 6 } }
+// ]);
+
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             shopLocation: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] },
+//                              { $eq: [ "$category",  "clothes" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     {
+//         $project:{
+//             _id: 1,
+//             items: 1,
+//             shopLocation: 1,
+//             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+//         }
+//     },
+//     { $sort : {  itemsCount: -1 } },
+//     { $match: { itemsCount: { $gte: 1 }, shopLocation: {$lte: 50} }},
+//     { $limit: 6 },
+//     { $sample: { size: 6 } }
 // ]);
