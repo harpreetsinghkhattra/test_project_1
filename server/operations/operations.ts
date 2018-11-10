@@ -483,15 +483,30 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                const { category } = obj;
+                let { category, area, presentShops, coordinates } = obj;
+                presentShops = presentShops && presentShops.length ? presentShops.map(ele => new ObjectId(ele)) : [];
 
                 users.aggregate([
+                    {
+                        $geoNear: {
+                            near: { coordinates },
+                            distanceField: "shopLocation",
+                            distanceMultiplier: 1 / 1000,
+                            spherical: true
+                        }
+                    },
                     {
                         $project: {
                             _id: 1,
                             itemCode: 1,
                             userId: 1,
-                            isShown: { $or: [{ $ne: [{ $indexOfArray: [[], "$_id"] }, -1] }, { $lt: [100, 99] }] }
+                            shopLocation: 1,
+                            business_name: 1,
+                            isShown: {
+                                $and: [
+                                    { $ne: [{ $indexOfArray: [presentShops, "$_id"] }, -1] }
+                                ]
+                            }
                         }
                     },
                     { $match: { isShown: false } },
@@ -528,11 +543,13 @@ export class Operations {
                         $project: {
                             _id: 1,
                             items: 1,
+                            shopLocation: 1,
+                            business_name: 1,
                             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
                         }
                     },
                     { $sort: { itemsCount: -1 } },
-                    { $match: { itemsCount: { $gte: 1 } } },
+                    { $match: { itemsCount: { $gte: 1 }, shopLocation: { $lte: parseInt(area) } } },
                     { $limit: 6 },
                     { $sample: { size: 6 } }
                 ], (err, data) => {

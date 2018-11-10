@@ -24,6 +24,6 @@ module.exports = {
         sendFriendRequest: ["id", "accessToken", "uid", "fid"],
         acceptFriendRequest: ["id", "accessToken", "status", "request_id", "uid", "fid"],
         getFriendsList: ["id", "accessToken"],
-        getHomeItems: ["id", "accessToken", "category"]
+        getHomeItems: ["id", "accessToken", "category", "area", "coordinates"]
     }
 }
