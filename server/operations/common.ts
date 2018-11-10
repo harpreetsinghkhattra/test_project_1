@@ -368,7 +368,7 @@ export class CommonJs {
                 return {
                     status: 400,
                     code: 1,
-                    data: [],
+                    data: response,
                     message: "Error",
                     emptyKeys: null,
                     error: false

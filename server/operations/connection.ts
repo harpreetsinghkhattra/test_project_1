@@ -6,7 +6,7 @@ export class Connection {
         let uri = "mongodb://127.0.0.1";
         // let uri = "mongodb://harpreetsinghkhattra:Ha872909066@ds141952.mlab.com:41952/ishaanvi";
 
-        MongoClient.connect(uri, (err, client) => {
+        MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
             console.log('err', err);
             if (err) cb(err, null);
             if (client) {
