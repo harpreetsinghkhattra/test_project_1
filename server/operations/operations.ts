@@ -528,7 +528,7 @@ export class Operations {
                                                 :
                                                 [
                                                     { $eq: ["$userId", "$$idd"] },
-                                                    { $eq: ["$category", category] }
+                                                    { $ne: [ { $indexOfArray: [ category, "$category" ] }, -1 ] }
                                                 ]
                                         }
                                     }
@@ -1125,6 +1125,65 @@ export class Operations {
 //     },
 //     { $sort : {  itemsCount: -1 } },
 //     { $match: { itemsCount: { $gte: 1 }, shopLocation: {$lte: 50} }},
+//     { $limit: 6 },
+//     { $sample: { size: 6 } }
+// ]);
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             shopLocation: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ ], "$_id"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: false }},
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] },
+//                              { $ne: [ { $indexOfArray: [ ["clothes", "suits"], "$category" ] }, -1 ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {$sort: {createdTime: -1}},
+//                  {$limit: 6}
+//             ],
+//             "as": "items"
+//         }
+//     }, 
+//     {
+//         $project:{
+//             _id: 1,
+//             items: 1,
+//             shopLocation: 1,
+//             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+//         }
+//     },
+//     { $sort : {  itemsCount: -1 } },
+//     { $match: { itemsCount: { $gte: 1 }, shopLocation: {$lte: 150} }},
 //     { $limit: 6 },
 //     { $sample: { size: 6 } }
 // ]);
