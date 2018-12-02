@@ -24,6 +24,11 @@ module.exports = {
         sendFriendRequest: ["id", "accessToken", "uid", "fid"],
         acceptFriendRequest: ["id", "accessToken", "status", "request_id", "uid", "fid"],
         getFriendsList: ["id", "accessToken"],
-        getHomeItems: ["id", "accessToken", "category", "area", "coordinates"]
+        getHomeItems: ["id", "accessToken", "category", "area", "coordinates"],
+        followOrUnfollowUser: ["id", "accessToken", "sellerId"],
+        followUser: ["id", "accessToken", "sellerId"],
+        search: ["id", "accessToken", "searchValue", "category", "price", "coordinates", "area"],
+        viewProduct: ["id", "accessToken", "productId", "category", "coordinates", "area"],
+        addProductCount: ["id", "accessToken", "productId"]
     }
 }

@@ -21,6 +21,10 @@ export class Product {
         this.getProducts();
         this.getProduct();
         this.getHomeItems();
+        this.followUser();
+        this.searchProduct();
+        this.viewProduct();
+        this.addProductCount();
     }
 
     /** Add product */
@@ -80,6 +84,54 @@ export class Product {
                         this.socket.emit('/socket/api/response/getHomeItems', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/getHomeItems', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Follow user */
+    followUser() {
+        this.socket.on('/socket/api/followUser',
+            (data) => Auth.authUsingSocket('followUser', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.followUser(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/followUser', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/followUser', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Product */
+    searchProduct() {
+        this.socket.on('/socket/api/search',
+            (data) => Auth.authUsingSocket('search', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.searchProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/search', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/search', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** View Product */
+    viewProduct() {
+        this.socket.on('/socket/api/viewProduct',
+            (data) => Auth.authUsingSocket('viewProduct', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getProductViaId(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/viewProduct', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/viewProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Add product count */
+    addProductCount() {
+        this.socket.on('/socket/api/addProductCount',
+            (data) => Auth.authUsingSocket('addProductCount', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.viewProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/addProductCount', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/addProductCount', CommonJs.socketResponse(status, response));
             }));
     }
 }

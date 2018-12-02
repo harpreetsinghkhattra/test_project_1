@@ -184,4 +184,269 @@ export class ProductOperations {
             }
         });
     }
+
+    /**
+     * Follow user
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static followUser(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var userFollower = db.collection('userFollow');
+                const { id, sellerId } = obj;
+
+                console.log(obj);
+                userFollower.find({ userId: new ObjectId(id), followedId: new ObjectId(sellerId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (id === sellerId) CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                    else if (data && data.length === 0) {
+                        userFollower.insert({
+                            userId: new ObjectId(id),
+                            followedId: new ObjectId(sellerId),
+                            isFollow: true
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        });
+                    } else if (data && data.length > 0) {
+                        const isFollow = data[0].isFollow ? false : true;
+                        userFollower.update({
+                            userId: new ObjectId(id),
+                            followedId: new ObjectId(sellerId)
+                        }, { $set: { isFollow: isFollow } }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        })
+                    } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Set view count
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static viewProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var products = db.collection('products');
+                const { id, productId } = obj;
+
+                products.find({ _id: new ObjectId(productId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length > 0) {
+                        const views = data[0].views ? data[0].views + 1 : 1;
+                        products.update({
+                            _id: new ObjectId(productId)
+                        }, { $set: { views } }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        })
+                    } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * View portal
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static viewUserPortal(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var products = db.collection('products');
+                const { id, productId } = obj;
+
+                products.find({ _id: new ObjectId(productId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length > 0) {
+                        products.update({
+                            _id: new ObjectId(productId)
+                        }, { $addToSet: { views: new ObjectId(id) } }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        })
+                    } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Search product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static searchProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { id, searchValue, category, price, coordinates, area } = obj;
+
+                console.log(obj);
+                users.aggregate([
+                    {
+                        $geoNear: {
+                            near: { coordinates },
+                            distanceField: "shopLocation",
+                            distanceMultiplier: 1 / 1000,
+                            spherical: true
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            shopLocation: 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "products",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $addFields: {
+                                        price: { $convert: { input: "$price", to: "double", onNull: null } }
+                                    }
+                                },
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            category === "all" && price === "all" ?
+                                                [
+                                                    { $eq: ["$userId", "$$idd"] },
+                                                    { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                ] :
+                                                category !== "all" && price === "all" ?
+                                                    [
+                                                        { $eq: ["$userId", "$$idd"] },
+                                                        { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
+                                                        { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                    ] :
+                                                    category === "all" && price !== "all" ?
+                                                        [
+                                                            { $eq: ["$userId", "$$idd"] },
+                                                            { $gte: ["$price", price[0]] },
+                                                            { $lte: ["$price", price[1]] },
+                                                            { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                        ] :
+                                                        [
+                                                            { $eq: ["$userId", "$$idd"] },
+                                                            { $gte: ["$price", price[0]] },
+                                                            { $lte: ["$price", price[1]] },
+                                                            { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
+                                                            { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                        ]
+                                        }
+                                    }
+                                },
+                                { $sort: { createdTime: -1 } }
+                            ],
+                            "as": "product"
+                        }
+                    },
+                    { $match: { shopLocation: { $lte: area } } },
+                    { $unwind: "$product" }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
+
+    /**
+     * Get product via id
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getProductViaId(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var products = db.collection('products');
+                const { productId, category, coordinates, area } = obj;
+
+                products.aggregate([
+                    { $match: { _id: ObjectId(productId) } },
+                    {
+                        $lookup: {
+                            from: "users",
+                            let: { id: "$userId" },
+                            pipeline: [
+                                {
+                                    $geoNear: {
+                                        near: { coordinates },
+                                        distanceField: "shopLocation",
+                                        distanceMultiplier: 1 / 1000,
+                                        spherical: true
+                                    }
+                                },
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $lte: ["$shopLocation", area] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        shopLocation: 1
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "products",
+                                        let: { userId: "$_id" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$userId", "$userId"] },
+                                                            { $eq: [category, "$category"] }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        as: 'items'
+                                    }
+                                },
+                                { $unwind: "$items" },
+                                { $sort: { createdTime: -1 } },
+                                { $sample: { size: 10 } },
+                                { $limit: 10 }
+                            ],
+                            as: "user"
+                        }
+                    }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
 }
