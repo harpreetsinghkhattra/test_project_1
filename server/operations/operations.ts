@@ -1331,9 +1331,181 @@ export class Operations {
 //         { $unwind: "$product" }
 // ]);
 
-
+//Get product via id
 // db.getCollection('products').aggregate([
 //     {$match: { _id: ObjectId("5bd5d55cd1d7fcf5fd4708b0")}},
+//     {
+//             $lookup: {
+//                     from: "users",
+//                     let: { id: "$userId"},
+//                     pipeline: [
+//                         {
+//                             $geoNear: {
+//                                 near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//                                 distanceField: "shopLocation",
+//                                 distanceMultiplier	: 1/1000,
+//                                 spherical: true
+//                             }
+//                         },
+//                         { $match: { 
+//                             $expr: {
+//                                 $and: [
+//                                     { $lte: ["$shopLocation", 100]}
+//                                 ]
+//                               }
+//                             }
+//                         },
+//                         {
+//                             $project: {
+//                                     _id: 1,
+//                                     shopLocation: 1
+//                             }
+//                         },
+//                         {
+//                             $lookup: {
+//                                 from: "products",
+//                                 let: { userId: "$_id"},
+//                                 pipeline: [
+//                                     { 
+//                                         $match: { 
+//                                           $expr: {
+//                                             $and: [
+//                                                 { $eq: ["$$userId", "$userId"]},
+//                                                 { $eq: ["clothes", "$category"]}
+//                                             ]
+//                                           }
+//                                         }
+//                                     }
+//                                 ],
+//                                 as: 'items'
+//                             }
+//                         },
+//                         {$unwind: "$items"},
+//                         {$sort: {createdTime: -1}},
+//                         {$sample: {size: 10}},
+//                         {$limit: 10}
+//                     ],
+//                     as: "user"
+//             }
+//     }
+// ]);
+
+//Get producat via id
+// db.getCollection('products').aggregate([
+//     {$match: { _id: ObjectId("5bd5d55cd1d7fcf5fd4708b0")}},
+//     {
+//         $lookup: {
+//             from: "users",
+//             let: { userId: "$userId"},
+//             pipeline: [
+//                 { 
+//                     $match: { 
+//                       $expr: {
+//                         $and: [
+//                             { $eq: ["$$userId", "$_id"]},
+//                         ]
+//                       }
+//                     }
+//                 },
+//             ],
+//             as: 'userInfo'
+//         }
+//     },
+//     {
+//         $unwind: "$userInfo"
+//     },
+//     {
+//             $lookup: {
+//                     from: "users",
+//                     let: { id: "$userId"},
+//                     pipeline: [
+//                         {
+//                             $geoNear: {
+//                                 near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//                                 distanceField: "shopLocation",
+//                                 distanceMultiplier	: 1/1000,
+//                                 spherical: true
+//                             }
+//                         },
+//                         { $match: { 
+//                             $expr: {
+//                                 $and: [
+//                                     { $lte: ["$shopLocation", 100]}
+//                                 ]
+//                               }
+//                             }
+//                         },
+//                         {
+//                             $project: {
+//                                     _id: 1,
+//                                     shopLocation: 1
+//                             }
+//                         },
+//                         {
+//                             $lookup: {
+//                                 from: "products",
+//                                 let: { userId: "$_id"},
+//                                 pipeline: [
+//                                     { 
+//                                         $match: { 
+//                                           $expr: {
+//                                             $and: [
+//                                                 { $eq: ["$$userId", "$userId"]},
+//                                                 { $eq: ["clothes", "$category"]}
+//                                             ]
+//                                           }
+//                                         }
+//                                     }
+//                                 ],
+//                                 as: 'items'
+//                             }
+//                         },
+//                         {$unwind: "$items"},
+//                         {$sort: {createdTime: -1}},
+//                         {$sample: {size: 10}},
+//                         {$limit: 10}
+//                     ],
+//                     as: "user"
+//             }
+//     }
+// ]);
+
+//Get product via id
+// db.getCollection('products').aggregate([
+//     {$match: { _id: ObjectId("5bd5d55cd1d7fcf5fd4708b0")}},
+//     {
+//         $lookup: {
+//             from: "users",
+//             let: { userId: "$userId"},
+//             pipeline: [
+//                 { 
+//                     $match: { 
+//                       $expr: {
+//                         $and: [
+//                             { $eq: ["$$userId", "$_id"]},
+//                         ]
+//                       }
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                             salt: 0,
+//                             status: 0,
+//                             createdTime: 0,
+//                             updatedTime: 0,
+//                             verificationToken: 0,
+//                             verificationCode: 0,
+//                             userType: 0,
+//                             password: 0
+//                     }
+//                 },
+//             ],
+//             as: 'userInfo'
+//         }
+//     },
+//     {
+//         $unwind: "$userInfo"
+//     },
 //     {
 //             $lookup: {
 //                     from: "users",

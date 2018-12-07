@@ -387,6 +387,39 @@ export class ProductOperations {
                     {
                         $lookup: {
                             from: "users",
+                            let: { userId: "$userId" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$$userId", "$_id"] },
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        salt: 0,
+                                        status: 0,
+                                        createdTime: 0,
+                                        updatedTime: 0,
+                                        verificationToken: 0,
+                                        verificationCode: 0,
+                                        userType: 0,
+                                        password: 0
+                                    }
+                                },
+                            ],
+                            as: 'userInfo'
+                        }
+                    },
+                    {
+                        $unwind: "$userInfo"
+                    },
+                    {
+                        $lookup: {
+                            from: "users",
                             let: { id: "$userId" },
                             pipeline: [
                                 {
