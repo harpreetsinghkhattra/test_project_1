@@ -2,6 +2,7 @@ import { Index } from './index';
 import { Auth } from '../routes/auth';
 import { Operations } from '../operations/operations';
 import { ProductOperations } from '../operations/productOperations';
+import { Chat } from '../operations/chat';
 
 import { CommonJs } from '../operations/common';
 
@@ -10,9 +11,11 @@ const CommonJsInstance = new CommonJs();
 export class Product {
     socket: any;
     IO: any;
-    constructor(socket, io) {
+    IndexInstance: Index;
+    constructor(socket, io, index) {
         this.socket = socket;
         this.IO = io;
+        this.IndexInstance = index;
     }
 
     userInit() {
@@ -25,6 +28,9 @@ export class Product {
         this.searchProduct();
         this.viewProduct();
         this.addProductCount();
+        this.createComment();
+        this.getProductComments();
+        this.sendRealTimeP2PMessage();
     }
 
     /** Add product */
@@ -134,9 +140,57 @@ export class Product {
                 } else this.socket.emit('/socket/api/response/addProductCount', CommonJs.socketResponse(status, response));
             }));
     }
+
+    /** Create Comment */
+    createComment() {
+        this.socket.on('/socket/api/createComment',
+            (data) => Auth.authUsingSocket('createComment', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.createCommentForProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/createComment', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/createComment', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Create Comment */
+    getProductComments() {
+        this.socket.on('/socket/api/getProductComments',
+            (data) => Auth.authUsingSocket('getProductComments', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getComments(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getProductComments', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getProductComments', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Chat */
+    sendRealTimeP2PMessage() {
+        this.socket.on('/socket/api/sendRealTimeP2PMessage',
+            (data) => Auth.authUsingSocket('sendRealTimeP2PMessage', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    Chat.saveMessage(data, (status, response) => {
+                        console.log("update user", this.socket.id);
+                        console.log("data.senderId", this.IndexInstance.socketIdViaUserId(data.senderId));
+
+                        this.IO.to(this.IndexInstance.socketIdViaUserId(data.senderId)).emit('/socket/api/response/sendRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+                        this.IO.to(this.IndexInstance.socketIdViaUserId(data.receiverId)).emit('/socket/api/response/sendRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+                    })
+                } else this.IO.to(this.IndexInstance.socketIdViaUserId(data.senderId)).emit('/socket/api/response/sendRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+            }));
+    }
 }
 
 interface GetUserRequest {
     id: string;
     accessToken: string;
 }
+
+// {
+// 	"id": "5bd5d1bdd1d7fcf5fd4708a9",
+//     "accessToken": "00c6da5c257b6efa5a27aa5e9350a79d",
+//   	"receiverId": "5bd5d1b8d1d7fcf5fd4708a7",
+//   	"senderId": "5bd5d1bdd1d7fcf5fd4708a9",
+//   	"message": "need to amend as peer"
+// }

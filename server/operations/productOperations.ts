@@ -482,4 +482,80 @@ export class ProductOperations {
             }
         });
     }
+
+    /**
+     * Comment
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static createCommentForProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var comments = db.collection('comments');
+                const { productId, userId, message } = obj;
+
+                comments.insert({
+                    productId: new ObjectId(productId),
+                    userId: new ObjectId(userId),
+                    message,
+                    createdTime: new Date().getTime()
+                }, (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data.ops[0], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Get comments
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getComments(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var comments = db.collection('comments');
+                const { productId } = obj;
+
+                comments.aggregate([
+                    { $match: { productId: new ObjectId(productId) } },
+                    {
+                        $lookup: {
+                            from: "users",
+                            let: { userId: "$userId" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$_id", "$$userId"] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        name: 1,
+                                        imageUrl: 1
+                                    }
+                                }
+                            ],
+                            as: 'userInfo'
+                        }
+                    }, {
+                        $unwind: "$userInfo"
+                    }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
 }

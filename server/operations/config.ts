@@ -29,6 +29,9 @@ module.exports = {
         followUser: ["id", "accessToken", "sellerId"],
         search: ["id", "accessToken", "searchValue", "category", "price", "coordinates", "area"],
         viewProduct: ["id", "accessToken", "productId", "category", "coordinates", "area"],
-        addProductCount: ["id", "accessToken", "productId"]
+        addProductCount: ["id", "accessToken", "productId"],
+        createComment: ["id", "accessToken", "productId", "userId", "message"],
+        getProductComments: ["id", "accessToken", "productId"],
+        sendRealTimeP2PMessage: ["id", "accessToken", "senderId", "receiverId", "message"]
     }
 }

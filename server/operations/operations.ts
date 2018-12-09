@@ -1561,3 +1561,33 @@ export class Operations {
 //             }
 //     }
 // ]);
+
+// get comments
+// db.getCollection('comments').aggregate([
+//     { $match: { productId: ObjectId("5bd5d791d1d7fcf5fd4708d6") } },
+//     {
+//             $lookup: {
+//                     from: "users",
+//                     let: { userId: "$userId" },
+//                     pipeline: [
+//                         { $match: {
+//                                 $expr: {
+//                                     $and: [
+//                                         { $eq: ["$_id", "$$userId"] }
+//                                     ]
+//                                 }
+//                             }
+//                         },
+//                         {
+//                             $project: {
+//                                     name: 1,
+//                                     imageUrl: 1
+//                             }
+//                         }
+//                     ],  
+//                     as: 'userInfo'
+//                 }
+//     },{
+//            $unwind: "$userInfo"
+//     }
+// ]);
