@@ -577,9 +577,9 @@ export class ProductOperations {
                         $project: {
                             _id: 1,
                             name: 1,
-                            buisness_name: 1,
+                            business_name: 1,
                             mobile_number: 1,
-                            buisness_address: 1,
+                            business_address: 1,
                             imageUrl: 1
                         }
                     },
