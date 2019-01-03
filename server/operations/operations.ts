@@ -1283,6 +1283,37 @@ export class Operations {
 //     }
 // ]);
 
+// db.getCollection('users').aggregate([
+//     { $match: { _id: ObjectId("5bd5d1a7d1d7fcf5fd4708a6")}},
+//     {
+//         $project: {
+//             _id: 1
+//         }
+//     },
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {
+//                     $match: 
+//                         { 
+//                             $expr:
+//                                 { 
+//                                     $and:
+//                                        [
+//                                          { $eq: [ "clothes",  "$category" ] },
+//                                          { $eq: [ "$userId",  "$$idd" ] }
+//                                        ]
+//                                 }
+//                         }
+//                 }
+//             ],
+//             "as": "new"
+//         }
+//     }
+// ]);
+
 //Search api
 // db.getCollection('users').aggregate([
 //          {

@@ -31,6 +31,8 @@ export class Product {
         this.createComment();
         this.getProductComments();
         this.sendRealTimeP2PMessage();
+        this.viewPortal();
+        this.getProductsViaType();
     }
 
     /** Add product */
@@ -178,6 +180,31 @@ export class Product {
                         this.IO.to(this.IndexInstance.socketIdViaUserId(data.receiverId)).emit('/socket/api/response/sendRealTimeP2PMessage', CommonJs.socketResponse(status, response));
                     })
                 } else this.IO.to(this.IndexInstance.socketIdViaUserId(data.senderId)).emit('/socket/api/response/sendRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get products via type */
+    getProductsViaType() {
+        this.socket.on('/socket/api/getProductViaType',
+            (data) => Auth.authUsingSocket('getProductViaType', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.viewProductsViaType(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getProductViaType', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getProductViaType', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** View portal */
+    viewPortal() {
+        this.socket.on('/socket/api/viewPortal',
+            (data) => Auth.authUsingSocket('viewPortal', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.viewPortal(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/viewPortal', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/viewPortal', CommonJs.socketResponse(status, response));
             }));
     }
 }

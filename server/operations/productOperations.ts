@@ -558,4 +558,136 @@ export class ProductOperations {
             }
         });
     }
+
+    /**
+     * View portal
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static viewPortal(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { userId } = obj;
+
+                users.aggregate([
+                    { $match: { _id: ObjectId(userId) } },
+                    {
+                        $project: {
+                            _id: 1,
+                            name: 1,
+                            buisness_name: 1,
+                            mobile_number: 1,
+                            buisness_address: 1,
+                            imageUrl: 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "userFollow",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $or:
+                                            [
+                                                { $eq: ["$userId", "$$idd"] },
+                                                { $eq: ["$sellerId", "$$idd"] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: "$_id",
+                                        followers: {
+                                            $sum: {
+                                                $cond: [
+                                                    { $eq: ["$userId", "$$idd"] },
+                                                    1,
+                                                    0
+                                                ]
+                                            }
+                                        },
+                                        following: {
+                                            $sum: {
+                                                $cond: [
+                                                    { $eq: ["$sellerId", "$$idd"] },
+                                                    1,
+                                                    0
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "as": "otherData"
+                        }
+                    }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
+
+    /**
+     * View products via type
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static viewProductsViaType(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { userId, type } = obj;
+
+                users.aggregate([
+                    { $match: { _id: ObjectId(userId) } },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "products",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            [
+                                                { $eq: [type, "$type"] },
+                                                { $eq: ["$userId", "$$idd"] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "as": "products"
+                        }
+                    }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
 }
