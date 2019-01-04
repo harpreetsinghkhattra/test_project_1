@@ -670,7 +670,6 @@ export class ProductOperations {
                                         {
                                             $and:
                                             [
-                                                { $eq: [type, "$selectType"] },
                                                 { $eq: ["$userId", "$$idd"] }
                                             ]
                                         }
