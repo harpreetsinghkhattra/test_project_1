@@ -34,6 +34,6 @@ module.exports = {
         getProductComments: ["id", "accessToken", "productId"],
         sendRealTimeP2PMessage: ["id", "accessToken", "senderId", "receiverId", "message"],
         viewPortal: ["id", "accessToken", "userId"],
-        getProductViaType: ["id", "accessToken", "type"]
+        getProductViaType: ["id", "accessToken", "userId"]
     }
 }
