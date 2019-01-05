@@ -603,7 +603,7 @@ export class ProductOperations {
                                 {
                                     $group: {
                                         _id: "$_id",
-                                        followers: {
+                                        following: {
                                             $sum: {
                                                 $cond: [
                                                     { $eq: ["$userId", "$$idd"] },
@@ -612,7 +612,7 @@ export class ProductOperations {
                                                 ]
                                             }
                                         },
-                                        following: {
+                                        followers: {
                                             $sum: {
                                                 $cond: [
                                                     { $eq: ["$followedId", "$$idd"] },
