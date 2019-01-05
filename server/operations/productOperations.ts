@@ -197,7 +197,6 @@ export class ProductOperations {
                 var userFollower = db.collection('userFollow');
                 const { id, sellerId } = obj;
 
-                console.log(obj);
                 userFollower.find({ userId: new ObjectId(id), followedId: new ObjectId(sellerId) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (id === sellerId) CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
@@ -208,7 +207,7 @@ export class ProductOperations {
                             isFollow: true
                         }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                            else this.viewPortal(obj, cb);
                         });
                     } else if (data && data.length > 0) {
                         const isFollow = data[0].isFollow ? false : true;
@@ -217,7 +216,7 @@ export class ProductOperations {
                             followedId: new ObjectId(sellerId)
                         }, { $set: { isFollow: isFollow } }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                            else this.viewPortal(obj, cb);
                         })
                     } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
                 });

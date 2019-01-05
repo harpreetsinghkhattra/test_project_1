@@ -391,6 +391,15 @@ export class CommonJs {
                     emptyKeys: null,
                     error: false
                 };
+            case 'no_change':
+                return {
+                    code: 1,
+                    status: 400,
+                    data: response,
+                    message: "NoChange",
+                    emptyKeys: null,
+                    error: false
+                };
             case 'noValue':
                 return {
                     code: 1,
