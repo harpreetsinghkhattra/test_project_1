@@ -626,6 +626,33 @@ export class ProductOperations {
                             ],
                             "as": "otherData"
                         }
+                    },
+                    {
+                        $lookup: {
+                            "from": "userFollow",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            [
+                                                { $eq: ["$userId", "$$idd"] },
+                                                { $eq: ["$followedId", "$$idd"] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: "$_id"
+                                    }
+                                }
+                            ],
+                            "as": "isFollow"
+                        }
                     }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
