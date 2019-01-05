@@ -377,7 +377,7 @@ export class CommonJs {
                 return {
                     code: 1,
                     status: 401,
-                    data: [],
+                    data: response,
                     message: "NotValid",
                     emptyKeys: null,
                     error: false

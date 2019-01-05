@@ -207,7 +207,7 @@ export class ProductOperations {
                             isFollow: true
                         }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else this.viewPortal({ userId: sellerId }, cb);
+                            else this.viewPortal({ userId: sellerId, id }, cb);
                         });
                     } else if (data && data.length > 0) {
                         const isFollow = data[0].isFollow ? false : true;
@@ -216,7 +216,7 @@ export class ProductOperations {
                             followedId: new ObjectId(sellerId)
                         }, { $set: { isFollow: isFollow } }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else this.viewPortal({ userId: sellerId }, cb);
+                            else this.viewPortal({ userId: sellerId, id }, cb);
                         })
                     } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
                 });
@@ -568,7 +568,9 @@ export class ProductOperations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                const { userId } = obj;
+                const { userId, id } = obj;
+
+                console.log(JSON.stringify(obj));
 
                 users.aggregate([
                     { $match: { _id: ObjectId(userId) } },
@@ -606,7 +608,12 @@ export class ProductOperations {
                                         following: {
                                             $sum: {
                                                 $cond: [
-                                                    { $eq: ["$userId", "$$idd"] },
+                                                    {
+                                                        $and: [
+                                                            { $eq: ["$userId", "$$idd"] },
+                                                            { $eq: ["$isFollow", true] }
+                                                        ]
+                                                    },
                                                     1,
                                                     0
                                                 ]
@@ -615,7 +622,12 @@ export class ProductOperations {
                                         followers: {
                                             $sum: {
                                                 $cond: [
-                                                    { $eq: ["$followedId", "$$idd"] },
+                                                    {
+                                                        $and: [
+                                                            { $eq: ["$followedId", "$$idd"] },
+                                                            { $eq: ["$isFollow", true] }
+                                                        ]
+                                                    },
                                                     1,
                                                     0
                                                 ]
@@ -639,15 +651,28 @@ export class ProductOperations {
                                         {
                                             $and:
                                             [
-                                                { $eq: ["$userId", "$$idd"] },
-                                                { $eq: ["$followedId", "$$idd"] }
+                                                { $eq: ["$userId", new ObjectId(id)] },
+                                                { $eq: ["$followedId", new ObjectId(userId)] },
                                             ]
                                         }
                                     }
                                 },
                                 {
-                                    $group: {
-                                        _id: "$_id"
+                                    $project: {
+                                        _id: "$_id",
+                                        isFollow: {
+                                            $sum: {
+                                                $cond: [
+                                                    {
+                                                        $and: [
+                                                            { $eq: ["$isFollow", true] }
+                                                        ]
+                                                    },
+                                                    1,
+                                                    0
+                                                ]
+                                            }
+                                        }
                                     }
                                 }
                             ],
