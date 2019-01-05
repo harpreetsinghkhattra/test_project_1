@@ -207,7 +207,7 @@ export class ProductOperations {
                             isFollow: true
                         }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else this.viewPortal({ userId: obj.id }, cb);
+                            else this.viewPortal({ userId: sellerId }, cb);
                         });
                     } else if (data && data.length > 0) {
                         const isFollow = data[0].isFollow ? false : true;
@@ -216,7 +216,7 @@ export class ProductOperations {
                             followedId: new ObjectId(sellerId)
                         }, { $set: { isFollow: isFollow } }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else this.viewPortal({ userId: obj.id }, cb);
+                            else this.viewPortal({ userId: sellerId }, cb);
                         })
                     } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
                 });
