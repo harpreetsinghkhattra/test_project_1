@@ -670,13 +670,58 @@ export class ProductOperations {
                                         {
                                             $and:
                                             [
+                                                { $eq: ["sale", "$selectType"] },
                                                 { $eq: ["$userId", "$$idd"] }
                                             ]
                                         }
                                     }
                                 }
                             ],
-                            "as": "products"
+                            "as": "saleProducts"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "products",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            [
+                                                { $eq: ["new", "$selectType"] },
+                                                { $eq: ["$userId", "$$idd"] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "as": "newProducts"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "products",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            [
+                                                { $eq: ["popular", "$selectType"] },
+                                                { $eq: ["$userId", "$$idd"] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            "as": "popularProducts"
                         }
                     }
                 ], (err, data) => {
