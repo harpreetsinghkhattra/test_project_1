@@ -419,7 +419,7 @@ export class ProductOperations {
                     {
                         $lookup: {
                             from: "users",
-                            let: { id: "$userId" },
+                            let: { id: "$userId", category: "$category" },
                             pipeline: [
                                 {
                                     $geoNear: {
@@ -441,20 +441,21 @@ export class ProductOperations {
                                 {
                                     $project: {
                                         _id: 1,
-                                        shopLocation: 1
+                                        shopLocation: 1,
+                                        category: "$$category"
                                     }
                                 },
                                 {
                                     $lookup: {
                                         from: "products",
-                                        let: { userId: "$_id" },
+                                        let: { userId: "$_id", category: "$category" },
                                         pipeline: [
                                             {
                                                 $match: {
                                                     $expr: {
                                                         $and: [
                                                             { $eq: ["$$userId", "$userId"] },
-                                                            { $eq: [category, "$category"] }
+                                                            { $eq: ["$$category", "$category"] }
                                                         ]
                                                     }
                                                 }

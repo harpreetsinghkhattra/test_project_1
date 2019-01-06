@@ -28,7 +28,7 @@ module.exports = {
         followOrUnfollowUser: ["id", "accessToken", "sellerId"],
         followUser: ["id", "accessToken", "sellerId"],
         search: ["id", "accessToken", "searchValue", "category", "price", "coordinates", "area"],
-        viewProduct: ["id", "accessToken", "productId", "category", "coordinates", "area"],
+        viewProduct: ["id", "accessToken", "productId", "coordinates", "area"],
         addProductCount: ["id", "accessToken", "productId"],
         createComment: ["id", "accessToken", "productId", "userId", "message"],
         getProductComments: ["id", "accessToken", "productId"],
