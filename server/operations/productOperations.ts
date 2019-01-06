@@ -389,6 +389,14 @@ export class ProductOperations {
                             let: { userId: "$userId" },
                             pipeline: [
                                 {
+                                    $geoNear: {
+                                        near: { coordinates },
+                                        distanceField: "shopLocation",
+                                        distanceMultiplier: 1 / 1000,
+                                        spherical: true
+                                    }
+                                },
+                                {
                                     $match: {
                                         $expr: {
                                             $and: [
