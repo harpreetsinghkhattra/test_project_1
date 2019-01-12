@@ -289,6 +289,7 @@ export class ProductOperations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
+                obj.searchValue = obj.searchValue ? obj.searchValue.toLowerCase() : '';
                 const { id, searchValue, category, price, coordinates, area } = obj;
 
                 console.log(obj);
@@ -314,7 +315,8 @@ export class ProductOperations {
                             "pipeline": [
                                 {
                                     $addFields: {
-                                        price: { $convert: { input: "$price", to: "double", onNull: null } }
+                                        price: { $convert: { input: "$price", to: "double", onNull: null } },
+                                        name: { $toLower: "$name" }
                                     }
                                 },
                                 {
@@ -510,7 +512,7 @@ export class ProductOperations {
                     createdTime: new Date().getTime()
                 }, (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data.ops[0], cb);
+                    else this.getComments(obj, cb);
                 });
             }
         });
