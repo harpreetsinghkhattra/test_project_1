@@ -1622,3 +1622,28 @@ export class Operations {
 //            $unwind: "$userInfo"
 //     }
 // ]);
+
+//Get wish products
+// db.getCollection('wishProducts').aggregate([
+//     {$match: { userId: ObjectId("5bd5d1b8d1d7fcf5fd4708a7")}},
+//     {$unwind: "$products"},
+//     {
+//         $lookup: {
+//             from: "products",
+//             let: { products: "$products"},
+//             pipeline: [
+//                 { 
+//                     $match: { 
+//                       $expr: {
+//                         $and: [
+//                             { $eq: ["$$products", "$_id"]},
+//                         ]
+//                       }
+//                     }
+//                 }
+//             ],
+//             as: 'productInfo'
+//         }
+//     },
+//     {$unwind: "$productInfo"}
+// ]);

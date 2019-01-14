@@ -33,6 +33,11 @@ export class Product {
         this.sendRealTimeP2PMessage();
         this.viewPortal();
         this.getProductsViaType();
+        this.rateProduct();
+        this.addWishProduct();
+        this.removeWishProduct();
+        this.clearWishProducts();
+        this.getAddedWishProducts();
     }
 
     /** Add product */
@@ -205,6 +210,71 @@ export class Product {
                         this.socket.emit('/socket/api/response/viewPortal', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/viewPortal', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Rate Product */
+    rateProduct() {
+        this.socket.on('/socket/api/rateProduct',
+            (data) => Auth.authUsingSocket('rateProduct', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.rateProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/rateProduct', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/rateProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Add Wish Product */
+    addWishProduct() {
+        this.socket.on('/socket/api/addWishProduct',
+            (data) => Auth.authUsingSocket('addWishProduct', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.addWishProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/addWishProduct', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/addWishProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Clear Wish Products */
+    clearWishProducts() {
+        this.socket.on('/socket/api/clearWishProducts',
+            (data) => Auth.authUsingSocket('clearWishProducts', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.clearAllWishedProducts(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/clearWishProducts', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/clearWishProducts', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Remove Wish Product */
+    removeWishProduct() {
+        this.socket.on('/socket/api/removeWishProduct',
+            (data) => Auth.authUsingSocket('removeWishProduct', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.removeWishedProduct(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/removeWishProduct', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/removeWishProduct', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get added wish products */
+    getAddedWishProducts() {
+        this.socket.on('/socket/api/getAddedWishProducts',
+            (data) => Auth.authUsingSocket('getAddedWishProducts', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getAddedWishProducts(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getAddedWishProducts', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getAddedWishProducts', CommonJs.socketResponse(status, response));
             }));
     }
 }

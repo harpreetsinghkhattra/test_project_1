@@ -428,6 +428,35 @@ export class ProductOperations {
                     },
                     {
                         $lookup: {
+                            from: "productsRatings",
+                            let: { id: "$_id" },
+                            pipeline: [
+                                {
+                                    $addFields: {
+                                        rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+                                    }
+                                },
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$$id", "$productId"] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: 'rating'
+                        }
+                    },
+                    {
+                        $addFields: {
+                            reviews: { $size: "$rating" },
+                            rating: { $avg: "$rating.rating" }
+                        }
+                    },
+                    {
+                        $lookup: {
                             from: "users",
                             let: { id: "$userId", category: "$category" },
                             pipeline: [
@@ -786,6 +815,201 @@ export class ProductOperations {
                             "as": "popularProducts"
                         }
                     }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
+
+    /**
+     * Rate product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static rateProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('productsRatings');
+
+                const { id, accessToken, rating, review, productId, userId } = obj;
+
+                collection.find({ userId: new ObjectId(userId), productId: new ObjectId(productId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length === 0) {
+                        collection.insert({
+                            userId: new ObjectId(userId),
+                            productId: new ObjectId(productId),
+                            rating,
+                            review,
+                            status: 0,
+                            deletedStatus: 0,
+                            createdTime: new Date().getTime(),
+                            updatedTime: new Date().getTime()
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        });
+                    } else collection.updateOne({
+                        userId: new ObjectId(userId),
+                        productId: new ObjectId(productId)
+                    }, {
+                            $set: {
+                                rating,
+                                review,
+                                updatedTime: new Date().getTime()
+                            }
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        });
+                })
+            }
+        })
+    }
+
+    /**
+     * Add Wish Product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static addWishProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('wishProducts');
+
+                const { id, accessToken, productId, userId } = obj;
+
+                collection.find({ userId: new ObjectId(userId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length === 0) {
+                        collection.insert({
+                            userId: new ObjectId(userId),
+                            products: [new ObjectId(productId)],
+                            status: 0,
+                            deletedStatus: 0,
+                            createdTime: new Date().getTime(),
+                            updatedTime: new Date().getTime()
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else this.getAddedWishProducts(obj, cb);
+                        });
+                    } else collection.updateOne({
+                        userId: new ObjectId(userId)
+                    }, {
+                            $addToSet: {
+                                products: new ObjectId(productId)
+                            }
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else this.getAddedWishProducts(obj, cb);
+                        });
+                });
+            }
+        });
+    }
+
+    /**
+     * Clear all wished products
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static clearAllWishedProducts(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('wishProducts');
+
+                const { id, accessToken, userId } = obj;
+
+                collection.find({ userId: new ObjectId(userId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length !== 0) {
+                        collection.remove({
+                            userId: new ObjectId(userId)
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else this.getAddedWishProducts(obj, cb);
+                        });
+                    } else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Remove Wish Product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static removeWishedProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('wishProducts');
+
+                const { id, accessToken, productId, userId } = obj;
+
+                collection.find({ userId: new ObjectId(userId), products: { $in: [new ObjectId(productId)] } }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    if (data && data.length !== 0) {
+                        collection.update({
+                            userId: new ObjectId(userId), products: { $in: [new ObjectId(productId)] }
+                        }, {
+                                $pull: {
+                                    products: new ObjectId(productId)
+                                }
+                            }, (err, data) => {
+                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                else this.getAddedWishProducts(obj, cb);
+                            });
+                    } else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Get Added Wish Products
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getAddedWishProducts(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('wishProducts');
+
+                const { id, accessToken, userId } = obj;
+
+                collection.aggregate([
+                    { $match: { userId: new ObjectId(userId) } },
+                    { $unwind: "$products" },
+                    {
+                        $lookup: {
+                            from: "products",
+                            let: { products: "$products" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$$products", "$_id"] },
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: 'productInfo'
+                        }
+                    },
+                    { $unwind: "$productInfo" }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else data.toArray((err, data) => {
