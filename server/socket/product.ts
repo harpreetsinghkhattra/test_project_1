@@ -277,6 +277,20 @@ export class Product {
                 } else this.socket.emit('/socket/api/response/getAddedWishProducts', CommonJs.socketResponse(status, response));
             }));
     }
+
+    /** Get messages */
+    getMessages() {
+        this.socket.on('/socket/api/getRealTimeP2PMessage',
+            this.socket.on('/socket/api/getRealTimeP2PMessage',
+                (data) => Auth.authUsingSocket('getRealTimeP2PMessage', data, (status, response) => {
+                    console.log(status, response);
+                    if (status === CommonJsInstance.LOGED_IN) {
+                        Chat.getAllMessages(data, (status, response) => {
+                            this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+                        })
+                    } else this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+                }));
+    }
 }
 
 interface GetUserRequest {

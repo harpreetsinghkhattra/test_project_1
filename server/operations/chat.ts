@@ -19,17 +19,41 @@ export class Chat {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var saveMessage = db.collection('saveMessage');
-                const { senderId, receiverId, message } = obj;
+                const { senderId, receiverId, productId, message } = obj;
 
                 saveMessage.insert({
-                    productId: new ObjectId(senderId),
-                    userId: new ObjectId(receiverId),
+                    senderId: new ObjectId(senderId),
+                    receiverId: new ObjectId(receiverId),
+                    productId: productId ? new ObjectId(productId) : 'NA',
                     message,
                     createdTime: new Date().getTime()
                 }, (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else CommonJs.close(client, CommonJSInstance.SUCCESS, data.ops[0], cb);
                 });
+            }
+        });
+    }
+
+    /**
+     * Get Message
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getAllMessages(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var saveMessage = db.collection('saveMessage');
+                const { senderId, receiverId, productId, message } = obj;
+
+                saveMessage.find({
+                    senderId: new ObjectId(senderId),
+                    receiverId: new ObjectId(receiverId)
+                }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                })
             }
         });
     }
