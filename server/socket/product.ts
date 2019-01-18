@@ -281,15 +281,14 @@ export class Product {
     /** Get messages */
     getMessages() {
         this.socket.on('/socket/api/getRealTimeP2PMessage',
-            this.socket.on('/socket/api/getRealTimeP2PMessage',
-                (data) => Auth.authUsingSocket('getRealTimeP2PMessage', data, (status, response) => {
-                    console.log(status, response);
-                    if (status === CommonJsInstance.LOGED_IN) {
-                        Chat.getAllMessages(data, (status, response) => {
-                            this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
-                        })
-                    } else this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
-                }));
+            (data) => Auth.authUsingSocket('getRealTimeP2PMessage', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    Chat.getAllMessages(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+            }));
     }
 }
 
