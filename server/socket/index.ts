@@ -33,7 +33,7 @@ export class Index {
                     this.usersList.push({ socketId: socket.id, userId: data.id });
                 }
 
-                console.log(this.usersList);
+                console.log("USER LIST ===> ", this.usersList);
                 this.IO.emit('/socket/api/updateUserList', { data: this.usersList });
             });
 
