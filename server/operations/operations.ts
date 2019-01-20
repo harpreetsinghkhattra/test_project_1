@@ -1647,3 +1647,80 @@ export class Operations {
 //     },
 //     {$unwind: "$productInfo"}
 // ]);
+
+//Get all save messages
+// db.getCollection('saveMessage').aggregate([
+//     {
+//         $match: {
+//             $expr: {
+//                  $or:[
+//                         {
+//                             $and: [
+//                                 {$eq: ["$productId", ObjectId("5bd5d1a7d1d7fcf5fd4708a6")]},
+//                                 {$eq: ["$userId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                             ]
+//                         },
+//                         {
+//                             $and: [
+//                                 {$eq: ["$userId", ObjectId("5bd5d1a7d1d7fcf5fd4708a6")]},
+//                                 {$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                             ]
+//                         }
+//                 ]   
+//             }
+//         }
+//     }
+// ]);
+
+//Get all save messages
+// db.getCollection('saveMessage').aggregate([
+//     {
+//         $match: {
+//             $expr: {
+//                  $or:[
+//                         {
+//                             $and: [
+//                                 {$eq: ["$productId", ObjectId("5bd5d1a7d1d7fcf5fd4708a6")]},
+//                                 {$eq: ["$userId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                             ]
+//                         },
+//                         {
+//                             $and: [
+//                                 {$eq: ["$userId", ObjectId("5bd5d1a7d1d7fcf5fd4708a6")]},
+//                                 {$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                             ]
+//                         }
+//                 ]   
+//             }
+//         }
+//     },
+//     { $sort: { "createdTime": -1 } },
+//     { $limit: 50 }
+// ]);
+
+
+//Get all chat users
+// db.getCollection('saveMessage').aggregate([
+//     {
+//         $match: {
+//             $expr: {
+//                  $or:[
+//                         {$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]},
+//                         {$eq: ["$userId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                 ]   
+//             }
+//         }
+//     },
+//     {
+//         $lookup:{
+//             from: "users",
+//             let: { senderId: "$productId", userId: "$userId"},
+//             pipeline: [
+                
+//             ],
+//             as: "receiverInfo"
+//         }
+//     },
+//     { $sort: { "createdTime": -1 } },
+//     { $limit: 50 }
+// ]);

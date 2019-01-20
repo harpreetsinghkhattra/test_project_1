@@ -47,13 +47,36 @@ export class Chat {
                 var saveMessage = db.collection('saveMessage');
                 const { senderId, receiverId, productId, message } = obj;
 
-                saveMessage.find({
-                    senderId: new ObjectId(senderId),
-                    receiverId: new ObjectId(receiverId)
-                }).toArray((err, data) => {
+                saveMessage.aggregate([
+                    {
+                        $match: {
+                            $expr: {
+                                $or: [
+                                    {
+                                        $and: [
+                                            { $eq: ["$senderId", new ObjectId(senderId)] },
+                                            { $eq: ["$receiverId", new ObjectId(receiverId)] }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            { $eq: ["$senderId", new ObjectId(receiverId)] },
+                                            { $eq: ["$receiverId", new ObjectId(senderId)] }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    { $sort: { "createdTime": -1 } },
+                    { $limit: 50 }
+                ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
-                })
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
             }
         });
     }
