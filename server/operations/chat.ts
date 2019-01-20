@@ -45,7 +45,7 @@ export class Chat {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var saveMessage = db.collection('saveMessage');
-                const { senderId, receiverId, productId, message } = obj;
+                const { senderId, receiverId } = obj;
 
                 saveMessage.aggregate([
                     {
