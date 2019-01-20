@@ -1724,3 +1724,170 @@ export class Operations {
 //     { $sort: { "createdTime": -1 } },
 //     { $limit: 50 }
 // ]);
+
+
+
+
+// {
+//         $lookup:{
+//             from: "users",
+//             let: { senderId: "$productId"},
+//             pipeline: [
+//                 {
+//                     $match: {
+//                         $expr: {$eq: ["$_id", "$$senderId"]}  
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: "$_id",
+//                         name: 1,
+//                         imagePath: 1,
+//                         imageUrl: 1
+//                     }
+//                 }
+//             ],
+//             as: "senderInfo"
+//         }
+//     },
+//     {$unwind: "$senderInfo"},
+//     {
+//         $lookup:{
+//             from: "users",
+//             let: { receiverId: "$userId"},
+//             pipeline: [
+//                 {
+//                     $match: {
+//                         $expr: {$eq: ["$_id", "$$receiverId"]}  
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: "$_id",
+//                         name: 1,
+//                         imagePath: 1,
+//                         imageUrl: 1
+//                     }
+//                 }
+//             ],
+//             as: "receiverInfo"
+//         }
+//     },
+//     {$unwind: "$receiverInfo"},
+//     { $sort: { "createdTime": -1 } }
+
+
+
+//Get receiver info
+// db.getCollection('saveMessage').aggregate([
+//     {
+//         $match: {
+//             $expr: {
+//                  $or:[
+//                         {$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]},
+//                         {$eq: ["$userId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                 ]   
+//             }
+//         }
+//     },
+//     {
+//         $project:{
+//             receiver: { $cond: [{$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}, "$userId", "$productId"] },
+//             message: 1,
+//             createdTime: 1
+//         }
+//     },
+//     {
+//         $lookup:{
+//             from: "users",
+//             let: { receiverId: "$receiver"},
+//             pipeline: [
+//                 {
+//                     $match: {
+//                         $expr: {$eq: ["$_id", "$$receiverId"]}  
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: "$_id",
+//                         name: 1,
+//                         imagePath: 1,
+//                         imageUrl: 1
+//                     }
+//                 }
+//             ],
+//             as: "receiverInfo"
+//         }
+//     },
+//     { $unwind: "$receiverInfo" },
+//     { $sort: { "createdTime": -1 } }
+// ]);
+
+
+
+// Get all chat users
+// db.getCollection('saveMessage').aggregate([
+//     {
+//         $match: {
+//             $expr: {
+//                  $or:[
+//                         {$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]},
+//                         {$eq: ["$userId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}
+//                 ]   
+//             }
+//         }
+//     },
+//     {
+//         $project:{
+//             receiver: { $cond: [{$eq: ["$productId", ObjectId("5bd5d1b8d1d7fcf5fd4708a7")]}, "$userId", "$productId"] },
+//             message: 1,
+//             createdTime: 1,
+//             product:1
+//         }
+//     },
+//     {
+//         $lookup:{
+//             from: "users",
+//             let: { receiverId: "$receiver"},
+//             pipeline: [
+//                 {
+//                     $match: {
+//                         $expr: {$eq: ["$_id", "$$receiverId"]}  
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: "$_id",
+//                         name: 1,
+//                         imagePath: 1,
+//                         imageUrl: 1
+//                     }
+//                 }
+//             ],
+//             as: "receiverInfo"
+//         }
+//     },
+//     { $unwind: "$receiverInfo" },
+//     {
+//         $lookup:{
+//             from: "products",
+//             let: { productId: "$product"},
+//             pipeline: [
+//                 {
+//                     $match: {
+//                         $expr: {$eq: ["$_id", "$$productId"]}  
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: "$_id",
+//                         name: 1,
+//                         images: 1
+//                     }
+//                 }
+//             ],
+//             as: "productInfo"
+//         }
+//     },
+//     { $sort: { "createdTime": -1 } }
+// ]);
