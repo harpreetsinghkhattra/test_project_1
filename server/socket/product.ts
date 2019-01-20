@@ -38,6 +38,8 @@ export class Product {
         this.removeWishProduct();
         this.clearWishProducts();
         this.getAddedWishProducts();
+        this.getMessages();
+        this.getChatUsers();
     }
 
     /** Add product */
@@ -288,6 +290,19 @@ export class Product {
                         this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/getRealTimeP2PMessage', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get Chat Users */
+    getChatUsers() {
+        this.socket.on('/socket/api/getAllChatUsers',
+            (data) => Auth.authUsingSocket('getAllChatUsers', data, (status, response) => {
+                console.log(status, response);
+                if (status === CommonJsInstance.LOGED_IN) {
+                    Chat.getAllChatUsers(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getAllChatUsers', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getAllChatUsers', CommonJs.socketResponse(status, response));
             }));
     }
 }

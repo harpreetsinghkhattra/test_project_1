@@ -33,7 +33,7 @@ module.exports = {
         createComment: ["id", "accessToken", "productId", "userId", "message"],
         getProductComments: ["id", "accessToken", "productId"],
         sendRealTimeP2PMessage: ["id", "accessToken", "senderId", "receiverId", "message"],
-        getRealTimeP2PMessage: ["id", "accessToken", "senderId", "receiverId", "message"],
+        getRealTimeP2PMessage: ["id", "accessToken", "senderId", "receiverId"],
         getAllChatUsers: ["id", "accessToken", "userId"],
         viewPortal: ["id", "accessToken", "userId"],
         getProductViaType: ["id", "accessToken", "userId"],
