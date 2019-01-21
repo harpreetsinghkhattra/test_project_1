@@ -135,28 +135,6 @@ export class Chat {
                             as: "receiverInfo"
                         }
                     },
-                    { $unwind: "$receiverInfo" },
-                    {
-                        $lookup: {
-                            from: "products",
-                            let: { productId: "$productId" },
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: { $eq: ["$_id", "$$productId"] }
-                                    }
-                                },
-                                {
-                                    $project: {
-                                        _id: "$_id",
-                                        name: 1,
-                                        images: 1
-                                    }
-                                }
-                            ],
-                            as: "productInfo"
-                        }
-                    },
                     { $sort: { "createdTime": -1 } }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
