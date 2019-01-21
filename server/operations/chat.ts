@@ -99,7 +99,7 @@ export class Chat {
                         $match: {
                             $expr: {
                                 $or: [
-                                    { $eq: ["$sender", new ObjectId(userId)] },
+                                    { $eq: ["$senderId", new ObjectId(userId)] },
                                     { $eq: ["$receiverId", new ObjectId(userId)] }
                                 ]
                             }
@@ -107,7 +107,7 @@ export class Chat {
                     },
                     {
                         $project: {
-                            receiver: { $cond: [{ $eq: ["$sender", new ObjectId(userId)] }, "$receiverId", "$senderId"] },
+                            receiver: { $cond: [{ $eq: ["$senderId", new ObjectId(userId)] }, "$receiverId", "$senderId"] },
                             message: 1,
                             createdTime: 1,
                             productId: 1
@@ -133,6 +133,28 @@ export class Chat {
                                 }
                             ],
                             as: "receiverInfo"
+                        }
+                    },
+                    { $unwind: "$receiverInfo" },
+                    {
+                        $lookup: {
+                            from: "products",
+                            let: { productId: "$productId" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: { $eq: ["$_id", "$$productId"] }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id: "$_id",
+                                        name: 1,
+                                        images: 1
+                                    }
+                                }
+                            ],
+                            as: "productInfo"
                         }
                     },
                     { $sort: { "createdTime": -1 } }
