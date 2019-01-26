@@ -498,6 +498,35 @@ export class ProductOperations {
                                                         ]
                                                     }
                                                 }
+                                            },
+                                            {
+                                                $lookup: {
+                                                    from: "productsRatings",
+                                                    let: { id: "$_id" },
+                                                    pipeline: [
+                                                        {
+                                                            $match: {
+                                                                $expr: {
+                                                                    $and: [
+                                                                        { $eq: ["$$id", "$productId"] }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            $addFields: {
+                                                                rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+                                                            }
+                                                        }
+                                                    ],
+                                                    as: 'rating'
+                                                }
+                                            },
+                                            {
+                                                $addFields: {
+                                                    reviews: { $size: "$rating" },
+                                                    rating: { $avg: "$rating.rating" }
+                                                }
                                             }
                                         ],
                                         as: 'items'

@@ -305,6 +305,18 @@ export class Product {
                 } else this.socket.emit('/socket/api/response/getAllChatUsers', CommonJs.socketResponse(status, response));
             }));
     }
+
+    /** Get All Notifications */
+    getAllNotifications() {
+        this.socket.on('/socket/api/getAllNotifications',
+            (data) => Auth.authUsingSocket('getAllNotifications', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    Operations.getAllNotifications(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getAllNotifications', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getAllNotifications', CommonJs.socketResponse(status, response));
+            }));
+    }
 }
 
 interface GetUserRequest {

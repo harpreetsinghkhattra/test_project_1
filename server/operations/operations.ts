@@ -299,7 +299,9 @@ export class Operations {
 
                 collection.insertOne({
                     title,
-                    description
+                    description,
+                    createdTime: new Date().getTime(),
+                    updatedTime: new Date().getTime()
                 }, (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else {
@@ -319,13 +321,32 @@ export class Operations {
 
                         fcm.send(message, function (err, response) {
                             if (err) {
-                                console.log("ERROR ===> ", err);
                                 CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                             } else {
                                 CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
                             }
                         });
                     }
+                })
+            }
+        })
+    }
+
+    /**
+     * Get Notifications
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getAllNotifications(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('notifications');
+                const { title, description } = obj;
+
+                collection.find({}).sort({ createdTime: -1 }).limit(100).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
                 })
             }
         })
