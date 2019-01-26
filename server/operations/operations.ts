@@ -586,13 +586,8 @@ export class Operations {
                                 {
                                     $lookup: {
                                         from: "productsRatings",
-                                        let: { id: "$productId" },
+                                        let: { id: "$_id" },
                                         pipeline: [
-                                            {
-                                                $addFields: {
-                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } }
-                                                }
-                                            },
                                             {
                                                 $match: {
                                                     $expr: {
@@ -601,7 +596,12 @@ export class Operations {
                                                         ]
                                                     }
                                                 }
-                                            }
+                                            },
+                                            {
+                                                $addFields: {
+                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } },
+                                                }
+                                            },
                                         ],
                                         as: 'rating'
                                     }
