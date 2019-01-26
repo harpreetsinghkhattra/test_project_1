@@ -583,6 +583,35 @@ export class Operations {
                                         }
                                     }
                                 },
+                                {
+                                    $lookup: {
+                                        from: "productsRatings",
+                                        let: { id: "$productId" },
+                                        pipeline: [
+                                            {
+                                                $addFields: {
+                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+                                                }
+                                            },
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$productId"] }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        as: 'rating'
+                                    }
+                                },
+                                {
+                                    $addFields: {
+                                        reviews: { $size: "$rating" },
+                                        rating: { $avg: "$rating.rating" }
+                                    }
+                                },
                                 { $sort: { createdTime: -1 } },
                                 { $limit: 6 }
                             ],
