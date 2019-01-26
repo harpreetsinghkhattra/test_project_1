@@ -15,6 +15,13 @@ router.post('/getUser', (req, res, next) => Auth.userAuth(req, res, next, 'getUs
     })
 });
 
+/** Send Notification */
+router.post('/sendNotification', (req, res, next) => Auth.userAuth(req, res, next, 'sendNotification'), (req, res) => {
+    Operations.sendNotification(req.body, (status, response) => {
+        CommonJs.httpResponse(req, res, status, response);
+    })
+});
+
 /** Edit seller profile */
 router.post('/editSellerProfile', (req, res, next) => Auth.userAuth(req, res, next, 'editSellerProfile'), (req, res) => {
     Operations.editSellerProfile(req.body, (status, response) => {

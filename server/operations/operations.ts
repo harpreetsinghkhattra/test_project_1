@@ -4,8 +4,12 @@ import { ObjectId, ObjectID } from 'mongodb';
 import { SendMail } from './sendMail';
 import { AppKeys } from '../utils/AppKeys';
 import { SendSMS } from './sendSMS';
+
 const CommonJSInstance = new CommonJs();
 const AppKeysInstance = new AppKeys();
+var FCM = require('fcm-node')
+var serverKey = require('../ishaanvi-1adfe-firebase-adminsdk-29s1y-43891fe706.json') //put the generated private key path here    
+var fcm = new FCM(serverKey)
 
 export class Operations {
 
@@ -282,6 +286,52 @@ export class Operations {
     }
 
     /**
+     * Send notification
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static sendNotification(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('notifications');
+                const { title, description } = obj;
+
+                collection.insertOne({
+                    title,
+                    description
+                }, (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else {
+                        const message = {
+                            to: "/topics/ishaanvi_events",
+                            notification: {
+                                title,
+                                body: description,
+                                sound: "default",
+                                color: '#59CAC8'
+                            },
+                            "data": {
+                                title,
+                                description
+                            }
+                        };
+
+                        fcm.send(message, function (err, response) {
+                            if (err) {
+                                console.log("ERROR ===> ", err);
+                                CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            } else {
+                                CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
+                            }
+                        });
+                    }
+                })
+            }
+        })
+    }
+
+    /**
      * Friend request
      * @param {*object} obj 
      * @param {*function} cb 
@@ -528,7 +578,7 @@ export class Operations {
                                                 :
                                                 [
                                                     { $eq: ["$userId", "$$idd"] },
-                                                    { $ne: [ { $indexOfArray: [ category, "$category" ] }, -1 ] }
+                                                    { $ne: [{ $indexOfArray: [category, "$category"] }, -1] }
                                                 ]
                                         }
                                     }
@@ -1716,7 +1766,7 @@ export class Operations {
 //             from: "users",
 //             let: { senderId: "$productId", userId: "$userId"},
 //             pipeline: [
-                
+
 //             ],
 //             as: "receiverInfo"
 //         }
