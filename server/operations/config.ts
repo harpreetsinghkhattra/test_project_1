@@ -43,6 +43,6 @@ module.exports = {
         clearWishProducts: ["id", "accessToken", "userId"],
         getAddedWishProducts: ["id", "accessToken", "userId"],
         sendNotification: ["id", "accessToken", "title", "description"],
-        getAllNotifications: ["id", "accessToken"]
+        getAllNotifications: ["id", "accessToken", "createdTime"]
     }
 }

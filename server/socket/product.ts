@@ -40,6 +40,7 @@ export class Product {
         this.getAddedWishProducts();
         this.getMessages();
         this.getChatUsers();
+        this.getAllNotifications();
     }
 
     /** Add product */

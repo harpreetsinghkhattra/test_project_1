@@ -353,6 +353,35 @@ export class ProductOperations {
                                         }
                                     }
                                 },
+                                {
+                                    $lookup: {
+                                        from: "productsRatings",
+                                        let: { id: "$_id" },
+                                        pipeline: [
+                                            {
+                                                $addFields: {
+                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+                                                }
+                                            },
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$productId"] }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        as: 'rating'
+                                    }
+                                },
+                                {
+                                    $addFields: {
+                                        reviews: { $size: "$rating" },
+                                        rating: { $avg: "$rating.rating" }
+                                    }
+                                },
                                 { $sort: { createdTime: -1 } }
                             ],
                             "as": "product"
@@ -794,6 +823,35 @@ export class ProductOperations {
                                                 { $eq: ["$userId", "$$idd"] }
                                             ]
                                         }
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "productsRatings",
+                                        let: { id: "$_id" },
+                                        pipeline: [
+                                            {
+                                                $addFields: {
+                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+                                                }
+                                            },
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$productId"] }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        as: 'rating'
+                                    }
+                                },
+                                {
+                                    $addFields: {
+                                        reviews: { $size: "$rating" },
+                                        rating: { $avg: "$rating.rating" }
                                     }
                                 }
                             ],

@@ -342,9 +342,9 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('notifications');
-                const { title, description } = obj;
+                const { createdTime } = obj;
 
-                collection.find({}).sort({ createdTime: -1 }).limit(100).toArray((err, data) => {
+                collection.find({ createdTime: { $gte: createdTime } }).sort({ createdTime: -1 }).limit(100).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
                 })
