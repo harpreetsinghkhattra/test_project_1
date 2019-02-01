@@ -148,9 +148,10 @@ export class Operations {
                                                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
                                                     else SendSMS.sendMessageViaAWS("91" + obj.mobile_number, message, (status, res) => {
                                                         console.log(status, res);
-                                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
+                                                        // this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb)
+                                                        SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
                                                     });
-                                                    // else SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
+                                                    // SendMail.signupSuccess(mailSentOpt, (status, res) => this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb));
                                                 });
                                             });
                                         }
