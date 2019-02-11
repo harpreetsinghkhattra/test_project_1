@@ -186,6 +186,33 @@ export class ProductOperations {
     }
 
     /**
+     * Add Banner Files
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static addBannerFiles(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var homeBanners = db.collection('homeBanners');
+                const { id, images } = obj;
+
+                homeBanners.insertOne({
+                    userId: new ObjectId(id),
+                    images: images,
+                    status: 0,
+                    deletedStatus: 0,
+                    createdTime: CommonJSInstance.EPOCH_TIME,
+                    updatedTime: CommonJSInstance.EPOCH_TIME
+                }, (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
+                    else this.getCollectionData({ userId: new ObjectId(id) }, homeBanners, { projection: {} }, client, cb);
+                });
+            }
+        });
+    }
+
+    /**
      * Follow user
      * @param {*object} obj 
      * @param {*function} cb 
@@ -1097,6 +1124,34 @@ export class ProductOperations {
                         }
                     },
                     { $unwind: "$productInfo" }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
+
+    /**
+     * Get Added Banners
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getAddedBanners(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('homeBanners');
+
+                const { id, accessToken, userId } = obj;
+
+                collection.aggregate([
+                    { $unwind: "$images" },
+                    { $sort: { updatedTime: -1 } },
+                    { $limit: 6 }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else data.toArray((err, data) => {

@@ -42,4 +42,17 @@ router.post('/uploadProductFiles', (req, res, next) =>
     }
 );
 
+router.post('/uploadBannerImages', (req, res, next) =>
+    upload(req, res, (err, data) => {
+        if (err) CommonJs.httpResponse(req, res, CommonJsInstance.ERROR, err);
+        else next();
+    }),
+    (req, res, next) => Auth.userAuth(req, res, next, 'uploadBannerImages'),
+    (req, res) => {
+        ProductOperations.addBannerFiles(req.body, (status, response) => {
+            CommonJs.httpResponse(req, res, status, response);
+        });
+    }
+);
+
 module.exports = router;

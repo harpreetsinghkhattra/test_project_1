@@ -41,6 +41,7 @@ export class Product {
         this.getMessages();
         this.getChatUsers();
         this.getAllNotifications();
+        this.getAddedBannerLocation();
     }
 
     /** Add product */
@@ -316,6 +317,18 @@ export class Product {
                         this.socket.emit('/socket/api/response/getAllNotifications', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/getAllNotifications', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get All added banneres */
+    getAddedBannerLocation() {
+        this.socket.on('/socket/api/getAddedBannerLocation',
+            (data) => Auth.authUsingSocket('getAddedBannerLocation', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getAddedBanners(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getAddedBannerLocation', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getAddedBannerLocation', CommonJs.socketResponse(status, response));
             }));
     }
 }
