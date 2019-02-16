@@ -577,7 +577,7 @@ export class Operations {
                             name: 1,
                             business_address: 1,
                             mobile_number: 1,
-                            isShown: {
+                            isShown: {   
                                 $and: [
                                     { $ne: [{ $indexOfArray: [presentShops, "$_id"] }, -1] }
                                 ]
@@ -652,7 +652,8 @@ export class Operations {
                             business_name: 1,
                             name: 1,
                             business_address: 1,
-                            mobile_number: 1, 
+                            mobile_number: 1,
+                            items: 1,
                             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
                         }
                     },
