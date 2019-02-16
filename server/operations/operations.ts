@@ -574,6 +574,9 @@ export class Operations {
                             userId: 1,
                             shopLocation: 1,
                             business_name: 1,
+                            name: 1,
+                            business_address: 1,
+                            mobile_number: 1,
                             isShown: {
                                 $and: [
                                     { $ne: [{ $indexOfArray: [presentShops, "$_id"] }, -1] }
