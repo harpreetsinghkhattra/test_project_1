@@ -649,7 +649,7 @@ export class Operations {
                             _id: 1,
                             itemCode: 1,
                             userId: 1,
-                            shopLocation: 1,
+                            shopLocation: 1,             
                             business_name: 1,
                             name: 1,
                             business_address: 1,
@@ -2008,4 +2008,64 @@ export class Operations {
 //     { $unwind: "$images" },
 //     { $sort: { updatedTime: -1 } },
 //     { $limit: 6 }
+// ]);
+
+
+//Users search
+// db.getCollection('users').aggregate([
+//          {
+//             $geoNear: {
+//                 near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//                 distanceField: "shopLocation",
+//                 distanceMultiplier	: 1/1000,
+//                 spherical: true
+//             }
+//         },
+//         {
+//             $project: {
+//                     _id: 1,
+//                     shopLocation: 1
+//                 }
+//         },
+//         {
+//             $lookup: {
+//                 "from": "users",
+//                 "let": { idd: "$_id" },
+//                 "pipeline": [
+//                     {$match: 
+//                         { $expr:
+//                             { $and:
+//                                [
+//                                  { $ne: [ { $indexOfCP: [ "$name", "test" ] }, -1]}
+//                                ]
+//                             }
+//                          }
+//                      },
+//                      {$sort: {createdTime: -1}},
+//                 ],
+//                 "as": "users"
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 "from": "products",
+//                 "let": { idd: "$_id" },
+//                 "pipeline": [
+//                     {$match: 
+//                         { $expr:
+//                             { $and:
+//                                [
+//                                  { $eq: [ "$userId",  "$$idd" ] },
+//                                  { $ne: [ { $indexOfArray: [ ["clothes", "suits"], "$category" ] }, -1 ] },
+//                                  { $ne: [ { $indexOfCP: [ "$name", "test" ] }, -1]}
+//                                ]
+//                             }
+//                          }
+//                      },
+//                      {$sort: {createdTime: -1}},
+//                 ],
+//                 "as": "products"
+//             }
+//         },
+//         { $match: { shopLocation: {$lte: 100} } }
 // ]);

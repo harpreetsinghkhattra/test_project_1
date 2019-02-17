@@ -319,7 +319,6 @@ export class ProductOperations {
                 obj.searchValue = obj.searchValue ? obj.searchValue.toLowerCase() : '';
                 const { id, searchValue, category, price, coordinates, area } = obj;
 
-                console.log(obj);
                 users.aggregate([
                     {
                         $geoNear: {
@@ -332,7 +331,31 @@ export class ProductOperations {
                     {
                         $project: {
                             _id: 1,
+                            mobile_number: 1,
+                            imageUrl: 1,
                             shopLocation: 1
+                        }
+                    },
+                    {
+                        $lookup: {
+                            "from": "users",
+                            "let": { idd: "$_id" },
+                            "pipeline": [
+                                {
+                                    $match:
+                                    {
+                                        $expr:
+                                        {
+                                            $and:
+                                            [
+                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                { $sort: { createdTime: -1 } },
+                            ],
+                            "as": "users"
                         }
                     },
                     {
@@ -378,6 +401,31 @@ export class ProductOperations {
                                                             { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                                         ]
                                         }
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "users",
+                                        let: { id: "$userId" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$_id"] }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                $project: {
+                                                    _id: 1,
+                                                    mobile_number: 1,
+                                                    imageUrl: 1
+                                                }
+                                            }
+                                        ],
+                                        as: 'userInfo'
                                     }
                                 },
                                 {
