@@ -348,7 +348,7 @@ export class ProductOperations {
                                         {
                                             $and:
                                             [
-                                                { $eq: ["$userId", 2] },
+                                                { $eq: ["$userType", 2] },
                                                 { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                             ]
                                         }
