@@ -348,9 +348,23 @@ export class ProductOperations {
                                         {
                                             $and:
                                             [
+                                                { $eq: ["$userId", 2] },
                                                 { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                             ]
                                         }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        itemCode: 1,
+                                        userId: 1,
+                                        shopLocation: 1,
+                                        business_name: 1,
+                                        name: 1,
+                                        business_address: 1,
+                                        mobile_number: 1,
+                                        imageUrl: 1
                                     }
                                 },
                                 { $sort: { createdTime: -1 } },
