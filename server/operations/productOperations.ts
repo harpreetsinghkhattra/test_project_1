@@ -342,14 +342,19 @@ export class ProductOperations {
                             "let": { idd: "$_id" },
                             "pipeline": [
                                 {
+                                    $addFields: {
+                                        name: { $toLower: "$name" }
+                                    }
+                                },
+                                {
                                     $match:
                                     {
                                         $expr:
                                         {
                                             $and:
                                             [
-                                                { $eq: ["$userType", 2] },
-                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                { $eq: ["$userType", 1] },
+                                                { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
                                             ]
                                         }
                                     }
