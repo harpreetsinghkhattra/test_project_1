@@ -994,6 +994,31 @@ export class ProductOperations {
                                             ]
                                         }
                                     }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "users",
+                                        let: { id: "$userId" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$_id"] }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                $project: {
+                                                    imageUrl: 1,
+                                                    _id: 1,
+                                                    mobile_number: 1
+                                                }
+                                            }
+                                        ],
+                                        as: 'userInfo'
+                                    }
                                 }
                             ],
                             "as": "newProducts"
@@ -1015,6 +1040,31 @@ export class ProductOperations {
                                                 { $eq: ["$userId", "$$idd"] }
                                             ]
                                         }
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "users",
+                                        let: { id: "$userId" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $and: [
+                                                            { $eq: ["$$id", "$_id"] }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                $project: {
+                                                    imageUrl: 1,
+                                                    _id: 1,
+                                                    mobile_number: 1
+                                                }
+                                            }
+                                        ],
+                                        as: 'userInfo'
                                     }
                                 }
                             ],
