@@ -1,0 +1,7 @@
+.login-success {
+    border: 1px solid #ebedf2;
+}
+
+.login-error {
+    border: 1px solid red;
+}
