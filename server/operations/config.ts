@@ -45,6 +45,10 @@ module.exports = {
         sendNotification: ["id", "accessToken", "title", "description"],
         getAllNotifications: ["id", "accessToken", "createdTime"],
         uploadBannerImages: ["id", "accessToken", "images"],
-        getAddedBannerLocation: ["id", "accessToken"]
+        getAddedBannerLocation: ["id", "accessToken"],
+
+        blockUser: ["id", "accessToken", "userId"],
+        getAllUsers: ["id", "accessToken"],
+        getBlockedUsers: ["id", "accessToken"]
     }
 }

@@ -5,6 +5,7 @@ import { Auth } from './auth';
 import * as User from './user';
 import * as Media from './media';
 import * as UploadProductFiles from './uploadProductFiles';
+import * as Admin from './admin';
 
 import { SendSMS } from '../operations/sendSMS';
 
@@ -198,5 +199,8 @@ router.use('/', Media);
 
 /** Upload product files */
 router.use('/', UploadProductFiles);
+
+/** Admin tasks */
+router.use('/', Admin);
 
 module.exports = router;

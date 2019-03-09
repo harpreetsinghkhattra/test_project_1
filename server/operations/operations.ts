@@ -980,9 +980,9 @@ export class Operations {
                 users.find({ _id: new ObjectId(obj.id) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
-                        users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken, deletedStatus: 0 }).toArray((err, data) => {
+                        users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.LOGED_IN, [], cb);
+                            else if (data && data.length !== 0) CommonJs.close(client, data[0].deletedStatus === 0 ? CommonJSInstance.LOGED_IN : CommonJSInstance.BLOCKED, [], cb);
                             else CommonJs.close(client, CommonJSInstance.LOGED_OUT, [], cb);
                         });
                     } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);

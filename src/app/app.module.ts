@@ -9,6 +9,7 @@ import { RegisterComponent } from './admin/auth/register/register.component';
 import { LoginComponent } from './admin/auth/login/login.component';
 import { NotFoundComponent } from './admin/auth/not-found/not-found.component';
 import { ForgotPasswordComponent } from './admin/auth/forgot-password/forgot-password.component';
+import { LandingComponent } from './admin/auth/landing/landing.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ForgotPasswordComponent } from './admin/auth/forgot-password/forgot-pas
     RegisterComponent,
     LoginComponent,
     NotFoundComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'tour-of-heroes' }),

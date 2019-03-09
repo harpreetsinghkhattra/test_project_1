@@ -8,7 +8,7 @@ import { FormGroup, FormControlName, FormBuilder, Validators } from '@angular/fo
 })
 export class LoginComponent implements OnInit {
 
-  private loginForm: FormGroup;
+  public loginForm: FormGroup;
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['',[Validators.pattern(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/), Validators.required]],

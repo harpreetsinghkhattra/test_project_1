@@ -19,6 +19,7 @@ export class CommonJs {
     public EMAIL_PRESENT: string = "emailPresent";
     public LOGED_IN: string = "logedIn";
     public LOGED_OUT: string = "logedOut";
+    public BLOCKED: string = "blocked";
     public REQUEST_ACCEPTED: string = "requestAccepted";
     public REQUEST_DECLINED: string = "requestDeclined";
     public CHANGE: string = "change";
@@ -313,6 +314,17 @@ export class CommonJs {
                         error: false
                     })
                 break;
+            case "blocked":
+                res.status(200)
+                    .json({
+                        code: 1,
+                        status: 200,
+                        data: response,
+                        message: "Blocked",
+                        emptyKeys: [],
+                        error: false
+                    })
+                break;
             case "requestAccepted":
                 res.status(200)
                     .json({
@@ -460,6 +472,15 @@ export class CommonJs {
                     status: 200,
                     data: response,
                     message: "LogedOut",
+                    emptyKeys: [],
+                    error: false
+                });
+            case "blocked":
+                return ({
+                    code: 1,
+                    status: 200,
+                    data: response,
+                    message: "Blocked",
                     emptyKeys: [],
                     error: false
                 });

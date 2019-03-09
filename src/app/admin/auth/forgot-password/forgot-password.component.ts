@@ -8,7 +8,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-  private forgotPasswordForm: FormGroup;
+  public forgotPasswordForm: FormGroup;
   constructor(private fb: FormBuilder) { 
     this.forgotPasswordForm = this.fb.group({
       email: ['',[Validators.pattern(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/), Validators.required]]

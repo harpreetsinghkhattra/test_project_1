@@ -17281,7 +17281,7 @@ input:focus {
 
 /* Backgrounds  */
 .bg-gradient-primary {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
 }
 
 .bg-gradient-secondary {
@@ -18010,7 +18010,7 @@ input:focus {
 }
 
 .navbar.horizontal-boxed-layout-navbar .navbar-middle .nav-pills .nav-item .nav-link.active {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   box-shadow: 0px 3px 8.3px 0.7px rgba(163, 93, 255, 0.35);
   color: #ffffff;
   border: 0;
@@ -18027,7 +18027,7 @@ input:focus {
 }
 
 .navbar.horizontal-boxed-layout-navbar .navbar-bottom {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   box-shadow: 0px 3px 8.3px 0.7px rgba(163, 93, 255, 0.35);
   padding: .5rem 1rem;
   border-radius: 6px;
@@ -18845,11 +18845,11 @@ code {
 
 .purchase-popup .btn.purchase-button {
   background-color: rgba(172, 50, 228, 0.9);
-  background-image: -owg-linear-gradient(to right, #d8f3f2, #59CAC8);
-  background-image: -webkit-linear-gradient(to right, #d8f3f2, #59CAC8);
-  background-image: -moz-linear-gradient(to right, #d8f3f2, #59CAC8);
-  background-image: -o-linear-gradient(to right, #d8f3f2, #59CAC8);
-  background-image: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background-image: -owg-linear-gradient(to right, #d8f3f2, #2976BD);
+  background-image: -webkit-linear-gradient(to right, #d8f3f2, #2976BD);
+  background-image: -moz-linear-gradient(to right, #d8f3f2, #2976BD);
+  background-image: -o-linear-gradient(to right, #d8f3f2, #2976BD);
+  background-image: linear-gradient(to right, #d8f3f2, #2976BD);
   color: #ffffff;
   border: none;
   line-height: 1;
@@ -18931,7 +18931,7 @@ code {
 
 /*Badge gradient variations*/
 .badge-gradient-primary {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   color: #ffffff;
 }
 
@@ -19463,7 +19463,7 @@ code {
 }
 
 .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   color: #ffffff;
 }
 
@@ -19819,7 +19819,7 @@ code {
 
 /* gradient buttons */
 .btn-gradient-primary {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   border: 0;
   -webkit-transition: opacity 0.3s ease;
   -moz-transition: opacity 0.3s ease;
@@ -19830,7 +19830,7 @@ code {
 
 .btn-gradient-primary:not([disabled]):not(.disabled):active, .btn-gradient-primary:not([disabled]):not(.disabled).active,
 .show > .btn-gradient-primary.dropdown-toggle {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
 }
 
 .btn-gradient-primary:hover {
@@ -20245,7 +20245,7 @@ code {
 }
 
 .form-check .form-check-label input[type="checkbox"]:checked + .input-helper:before {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   border-width: 0;
 }
 
@@ -20323,7 +20323,7 @@ code {
 }
 
 .form-check .form-check-label input[type="radio"]:checked + .input-helper:before {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
   border-width: 0;
 }
 
@@ -20356,7 +20356,7 @@ code {
 
 .form-check-primary.form-check label input[type="checkbox"]:checked + .input-helper:before,
 .form-check-primary.form-check label input[type="radio"]:checked + .input-helper:before {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
 }
 
 .form-check-secondary.form-check label input[type="checkbox"] + .input-helper:before,
@@ -20713,7 +20713,7 @@ dl li {
 }
 
 .gradient-bullet-list li:nth-child(5):before {
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
 }
 
 /* Preview */
@@ -20942,10 +20942,10 @@ dl li {
 }
 
 .ishaanvi-btn-gradient-primary{
-  background: linear-gradient(to right, #d8f3f2, #59CAC8);
+  background: linear-gradient(to right, #d8f3f2, #2976BD);
 }
 
 .bg-ishaanvi-theme-color{
-  background-color: #59CAC8;
+  background-color: #2976BD;
 }
 /*# sourceMappingURL=maps/style.css.map */
