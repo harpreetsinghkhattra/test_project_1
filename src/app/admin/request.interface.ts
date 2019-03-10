@@ -21,6 +21,12 @@ export interface GetAllUsersRequest {
     accessToken: string;
 }
 
+/** Get admin users and products count */
+export interface GetHomeAdminData {
+    id: string;
+    accessToken: string;
+}
+
 /** Get blocked users */
 export interface GetBlockedUsers {
     id: string;
@@ -32,6 +38,21 @@ export interface BlockUser {
     id: string;
     accessToken: string;
     userId: string;
+}
+
+/** Send push notification */
+export interface SendNotificationRequest {
+    id: string;
+    accessToken: string;
+    title: string;
+    description: string;
+}
+
+/** Upload images */
+export interface UploadImagesRequest {
+    id: string;
+    accessToken: string;
+    images: any[];
 }
 
 /** Edit user request */

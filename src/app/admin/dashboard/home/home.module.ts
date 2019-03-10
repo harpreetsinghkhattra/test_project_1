@@ -17,7 +17,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
   declarations: [HomeComponent, HeaderComponent, SidebarComponent, FooterComponent, LandingComponent, UsersComponent, BlockedUsersComponent, PostNotificationComponent, UploadBannerComponent, ChangePasswordComponent],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    ReactiveFormsModule
   ]
 })
 export class HomeModule { }

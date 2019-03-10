@@ -102,4 +102,102 @@ export class AdminOperations {
             }
         })
     }
+
+    /**
+     * View admin home page data
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getAdminHomeData(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { userId, type } = obj;
+
+                users.aggregate([
+                    {
+                        $match: {
+                            $expr: {
+                                $ne: ["$userType", 3]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                $cond: [{
+                                    $eq: ["$userType", 1]
+                                }, "sellers", "consumers"]
+                            },
+                            total: { $sum: 1 },
+                            active: {
+                                $sum: {
+                                    $cond: [
+                                        {
+                                            $eq: ["$deletedStatus", 0]
+                                        },
+                                        1, 0
+                                    ]
+                                }
+                            },
+                            deactive: {
+                                $sum: {
+                                    $cond: [
+                                        {
+                                            $eq: ["$deletedStatus", 2]
+                                        },
+                                        1, 0
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "products",
+                            pipeline: [
+                                {
+                                    $group: {
+                                        _id: "products",
+                                        totalProducts: {
+                                            $sum: 1
+                                        },
+                                        active: {
+                                            $sum: {
+                                                $cond: [
+                                                    {
+                                                        $eq: ["$status", 1]
+                                                    },
+                                                    1, 0
+                                                ]
+                                            }
+                                        },
+                                        deactivated: {
+                                            $sum: {
+                                                $cond: [
+                                                    {
+                                                        $eq: ["$status", 0]
+                                                    },
+                                                    1, 0
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "products"
+                        }
+                    },
+                    { $unwind: "$products" }
+                ], (err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else data.toArray((err, data) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                    });
+                });
+            }
+        });
+    }
 }

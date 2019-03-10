@@ -321,13 +321,15 @@ export class Operations {
                             }
                         };
 
-                        fcm.send(message, function (err, response) {
-                            if (err) {
-                                CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            } else {
-                                CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
-                            }
-                        });
+                        // fcm.send(message, function (err, response) {
+                        //     if (err) {
+                        //         CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        //     } else {
+                        //         CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
+                        //     }
+                        // });
+
+                        CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
                     }
                 })
             }
@@ -579,7 +581,7 @@ export class Operations {
                             business_address: 1,
                             mobile_number: 1,
                             imageUrl: 1,
-                            isShown: {   
+                            isShown: {
                                 $and: [
                                     { $ne: [{ $indexOfArray: [presentShops, "$_id"] }, -1] }
                                 ]
@@ -650,7 +652,7 @@ export class Operations {
                             _id: 1,
                             itemCode: 1,
                             userId: 1,
-                            shopLocation: 1,             
+                            shopLocation: 1,
                             business_name: 1,
                             name: 1,
                             business_address: 1,
@@ -2069,4 +2071,198 @@ export class Operations {
 //             }
 //         },
 //         { $match: { shopLocation: {$lte: 100} } }
+// ]);
+
+/** Get admin home page data */
+// db.getCollection('users').aggregate([
+//     {
+//             $group: {
+//                     _id: {
+//                             $cond: [{
+//                                     $eq: ["$userType", 1]
+//                                 }, "sellers", "consumers"]
+//                         },
+//                      total: { $sum: 1 },
+//                      active: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 0]
+//                             },
+//                             1, 0
+//                             ]
+//                          }},
+//                      deactive: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 2]
+//                             },
+//                             1, 0
+//                             ]
+//                          }}
+//             }
+//     },
+//     {
+//             $lookup: {
+//                     from: "products",
+//                     pipeline: [
+//                         {
+//                             $group: {
+//                                _id: "products",
+//                                totalProducts: {
+//                                     $sum: 1
+//                                },
+//                                active: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$deletedStatus", 1]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }},
+//                                deactivated: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$deletedStatus", 0]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }}
+//                             }
+//                         }
+//                     ],
+//                     as: "products"
+//             }
+//     },
+//     {$unwind: "$products"}
+// ]);
+
+// db.getCollection('users').aggregate([
+//     { $match: { $expr: {
+//             $ne: ["$userType", 3]}
+//         } },
+//     {
+//             $group: {
+//                     _id: {
+//                             $cond: [{
+//                                     $eq: ["$userType", 1]
+//                                 }, "sellers", "consumers"]
+//                         },
+//                      total: { $sum: 1 },
+//                      active: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 0]
+//                             },
+//                             1, 0
+//                             ]
+//                          }},
+//                      deactive: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 2]
+//                             },
+//                             1, 0
+//                             ]
+//                          }}
+//             }
+//     },
+//     {
+//             $lookup: {
+//                     from: "products",
+//                     pipeline: [
+//                         {
+//                             $group: {
+//                                _id: "products",
+//                                totalProducts: {
+//                                     $sum: 1
+//                                },
+//                                active: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$deletedStatus", 1]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }},
+//                                deactivated: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$deletedStatus", 0]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }}
+//                             }
+//                         }
+//                     ],
+//                     as: "products"
+//             }
+//     },
+//     {$unwind: "$products"}
+// ]);
+
+
+// db.getCollection('users').aggregate([
+//     { $match: { $expr: {
+//             $ne: ["$userType", 3]}
+//         } },
+//     {
+//             $group: {
+//                     _id: {
+//                             $cond: [{
+//                                     $eq: ["$userType", 1]
+//                                 }, "sellers", "consumers"]
+//                         },
+//                      total: { $sum: 1 },
+//                      active: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 0]
+//                             },
+//                             1, 0
+//                             ]
+//                          }},
+//                      deactive: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 2]
+//                             },
+//                             1, 0
+//                             ]
+//                          }}
+//             }
+//     },
+//     {
+//             $lookup: {
+//                     from: "products",
+//                     pipeline: [
+//                         {
+//                             $group: {
+//                                _id: "products",
+//                                totalProducts: {
+//                                     $sum: 1
+//                                },
+//                                active: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$status", 1]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }},
+//                                deactivated: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$status", 0]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }}
+//                             }
+//                         }
+//                     ],
+//                     as: "products"
+//             }
+//     },
+//     {$unwind: "$products"}
 // ]);

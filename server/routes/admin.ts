@@ -27,4 +27,11 @@ router.post('/getBlockedUsers', (req, res, next) => Auth.userAuth(req, res, next
     })
 });
 
+/** Get all users count and all products count */
+router.post('/getTotalUsersAndProducts', (req, res, next) => Auth.userAuth(req, res, next, 'getTotalUsersAndProducts'), (req, res) => {
+    AdminOperations.getAdminHomeData(req.body, (status, response) => {
+        CommonJs.httpResponse(req, res, status, response);
+    })
+});
+
 module.exports = router;

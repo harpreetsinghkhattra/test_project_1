@@ -4,16 +4,15 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title">Upload Banners</h4>
-          <form class="forms-sample">
-            <div class="form-group">
-              <label>File upload* (Maximum 6 images you can upload)</label>
-              <div class="input-group col-xs-12">
-                <input type="file" multiple accept=".png, .jpg, .jpeg" >
-              </div>
+          <!--<form class="forms-sample">-->
+          <div class="form-group">
+            <label>File upload* (Maximum 6 images you can upload)</label>
+            <div class="input-group col-xs-12">
+              <input type="file" (change)="onChangeFile($event.target.files)" multiple accept=".png, .jpg, .jpeg">
             </div>
-            <button type="submit" class="btn btn-gradient-primary mr-2">Submit</button>
-            <button class="btn btn-light">Cancel</button>
-          </form>
+          </div>
+          <button type="button" (click)="confirmUploadImages()" class="btn btn-gradient-primary mr-2">{{isUploading ? "Please wait..." : "Submit"}}</button>
+          <!--</form>-->
         </div>
       </div>
     </div>

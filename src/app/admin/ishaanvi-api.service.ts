@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LoginRequest, ForgetPasswordRequest, ResetPasswordRequest, RefundBookingAmount, AddPackage, DeletePackage, UpdatePackage, SetCommissionRate, PreRegisterEmail, CancelSubscription, FinancialReportRequest, GetUserRequest, LogoutRequest, GetAllUsersRequest, BlockUser, GetBlockedUsers } from './request.interface';
+import { LoginRequest, ForgetPasswordRequest, ResetPasswordRequest, RefundBookingAmount, AddPackage, DeletePackage, UpdatePackage, SetCommissionRate, PreRegisterEmail, CancelSubscription, FinancialReportRequest, GetUserRequest, LogoutRequest, GetAllUsersRequest, BlockUser, GetBlockedUsers, SendNotificationRequest, UploadImagesRequest, GetHomeAdminData } from './request.interface';
 import { Observable } from 'rxjs';
 import { Response } from './response.interface';
 
@@ -76,5 +76,20 @@ export class IshaanviApiService {
   /** Block user */
   blockUser(data: BlockUser): Observable<any> {
     return this.http.post(`${this.BASE_URL}/block/user`, data);
+  }
+
+  /** Send push notification */
+  sendPushNotification(data: SendNotificationRequest): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/sendNotification`, data);
+  }
+
+  /** Upload images */
+  uploadImages(data: UploadImagesRequest): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/uploadBannerImages`, data);
+  }
+
+  /** Get home data */
+  getTotalUsersAndProducts(data: GetHomeAdminData): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/getTotalUsersAndProducts`, data);
   }
 }

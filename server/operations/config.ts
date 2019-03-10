@@ -49,6 +49,7 @@ module.exports = {
 
         blockUser: ["id", "accessToken", "userId"],
         getAllUsers: ["id", "accessToken"],
-        getBlockedUsers: ["id", "accessToken"]
+        getBlockedUsers: ["id", "accessToken"],
+        getTotalUsersAndProducts: ["id", "accessToken"]
     }
 }

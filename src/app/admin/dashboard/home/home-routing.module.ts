@@ -6,7 +6,7 @@ import { UsersComponent } from './users/users.component';
 import { BlockedUsersComponent } from './blocked-users/blocked-users.component';
 import { PostNotificationComponent } from './post-notification/post-notification.component';
 import { UploadBannerComponent } from './upload-banner/upload-banner.component';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   { path: 'home/routing', redirectTo: '', pathMatch: 'full' },
@@ -14,6 +14,7 @@ const routes: Routes = [
     path: '', component: HomeComponent, children: [
       { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: LandingComponent },
+      { path: 'changePassword', component: ChangePasswordComponent },
       { path: 'users/all', component: UsersComponent },
       { path: 'users/blocked', component: BlockedUsersComponent },
       { path: 'notification/post', component: PostNotificationComponent },
