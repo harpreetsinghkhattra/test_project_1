@@ -34,7 +34,7 @@ export class Operations {
                                     if (data[0] && (data[0].verificationCode === 1 || data[0].userType === 2)) {
                                         CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
                                     } else {
-                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0, userAccessToken: 0, _id: 0 } }, client, cb);
+                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb);
                                     }
                                 } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                             })
@@ -278,7 +278,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
-                collection.find({ _id: ObjectId(obj.id), deletedStatus: 0 }, { projection: { password: 0, salt: 0, userAccessToken: 0 } }).toArray((err, data) => {
+                collection.find({ _id: ObjectId(obj.id), deletedStatus: 0 }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (data && data.length !== 0) CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
                     else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);

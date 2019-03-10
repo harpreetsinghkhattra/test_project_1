@@ -6,6 +6,7 @@ import { UsersComponent } from './users/users.component';
 import { BlockedUsersComponent } from './blocked-users/blocked-users.component';
 import { PostNotificationComponent } from './post-notification/post-notification.component';
 import { UploadBannerComponent } from './upload-banner/upload-banner.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: 'home/routing', redirectTo: '', pathMatch: 'full' },

@@ -1,4 +1,5 @@
-export class LoginModel{
+import { Deserializable } from './deserializable.model';
+export class UserModel {
     _id: string;
     email: string;
     userType: number;
@@ -20,4 +21,9 @@ export class LoginModel{
     imageUrl: string;
     address: string;
     location: Object;
+
+    deserialize(input: any): this {
+        Object.assign(this, input);
+        return this;
+    }
 }

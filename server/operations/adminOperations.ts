@@ -21,20 +21,23 @@ export class AdminOperations {
 
                 const { id, accessToken, userId } = obj;
 
-                users.updateOne({ userId: new ObjectId(userId) }, {
-                    $set: {
-                        deletedStatus: AppKeysInstance.BLOCKED
-                    }
-                }, (err, data) => {
+                users.find({ _id: new ObjectId(userId) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
-                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                        else {
-                            // var response = data.ops[0];
-                            this.getCollectionData({ userId: new ObjectId(obj.userId) }, users, { projection: { password: 0, salt: 0, accessToken: 0 } }, client, cb);
-                        }
+                        users.updateOne({ _id: new ObjectId(userId) }, {
+                            $set: {
+                                deletedStatus: data[0].deletedStatus === AppKeysInstance.UN_BLOCKED ? AppKeysInstance.BLOCKED : AppKeysInstance.UN_BLOCKED
+                            }
+                        }, (err, data) => {
+                            console.log(JSON.stringify(err), JSON.stringify(data));
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else {
+                                // var response = data.ops[0];
+                                this.getCollectionData({ _id: new ObjectId(obj.userId) }, users, { projection: { password: 0, salt: 0 } }, client, cb);
+                            }
+                        });
                     } else CommonJs.close(client, CommonJSInstance.NOVALUE, [], cb);
-                });
+                })
             }
         })
     }

@@ -5,14 +5,18 @@ import { RegisterComponent } from './admin/auth/register/register.component';
 import { NotFoundComponent } from './admin/auth/not-found/not-found.component';
 import { ForgotPasswordComponent } from './admin/auth/forgot-password/forgot-password.component';
 import { LandingComponent } from './admin/auth/landing/landing.component';
+import { ResetPasswordComponent } from './admin/dashboard/home/reset-password/reset-password.component';
+
+import { IshaanviAuthService } from './admin/ishaanvi-auth.service';
 
 const routes: Routes = [
   { path: '', redirectTo: '/', pathMatch: 'full' },
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'resetPassword', component: ResetPasswordComponent, canActivate: [IshaanviAuthService] },
   { path: 'register', component: RegisterComponent },
   { path: 'forgotPassword', component: ForgotPasswordComponent },
-  { path: 'admin', loadChildren: "./admin/dashboard/home/home.module#HomeModule" },
+  { path: 'admin', loadChildren: "./admin/dashboard/home/home.module#HomeModule", canActivate: [IshaanviAuthService] },
   { path: "**", component: NotFoundComponent }
 ];
 

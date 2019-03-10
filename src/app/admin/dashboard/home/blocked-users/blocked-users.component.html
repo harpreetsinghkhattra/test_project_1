@@ -5,10 +5,10 @@
         <div class="card-body">
           <div class="d-flex justify-content-between mb-2">
             <h4 class="card-title">Blocked Users</h4>
-            <select>
-              <option>All</option>
-              <option>Sellers</option>
-              <option>Consumer</option>
+            <select (change)="selectUserType($event.target.value)">
+              <option value="0">All</option>
+              <option value="1">Sellers</option>
+              <option value="2">Consumer</option>
             </select>
           </div>
           <div class="table-responsive">
@@ -36,46 +36,44 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <img src="images/faces/face1.jpg" class="mr-2" alt="image">
-                    David Grey
+                <tr *ngIf="isLoading">
+                  <td></td>
+                  <td></td>
+                  <td class="text-center">
+                    Please wait...
                   </td>
-                  <td>
-                    WD-12345
-                  </td>
-                  <td>
-                    Seller
-                  </td>
-                  <td>
-                    <label class="badge badge-gradient-success">ACTIVE</label>
-                  </td>
-                  <td>
-                    Dec 5, 2017
-                  </td>
-                  <td>
-                    <label class="badge badge-gradient-info">BLOCK</label>
-                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
                 </tr>
-                <tr>
+                <tr *ngIf="!isLoading && usersList && usersList.length === 0">
+                  <td></td>
+                  <td></td>
+                  <td class="text-center">
+                    No record available!
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr *ngFor="let obj of usersList;let i = index;">
                   <td>
-                    <img src="images/faces/face4.jpg" class="mr-2" alt="image">
-                    John Doe
+                    <img [src]="obj && obj.imageUrl ? obj.imageUrl : '/assets/images/profile.png'" class="mr-2" alt="image">                    {{obj.name}}
                   </td>
                   <td>
-                    WD-12345
+                    {{obj._id}}
                   </td>
                   <td>
-                    Consumer
+                    {{obj.userType === 1 ? "Seller" : "Consumer"}}
                   </td>
                   <td>
-                    <label class="badge badge-gradient-danger">BLOCKED</label>
+                    <label [class]="obj.deletedStatus === 2 ? 'badge badge-gradient-danger' : 'badge badge-gradient-success'">{{obj.deletedStatus === 2 ? 'BLOCKED' : 'ACTIVE'}}</label>
                   </td>
                   <td>
-                    Dec 3, 2017
+                    {{ obj.createdTime | date:'MMM dd, yyyy' }}
                   </td>
                   <td>
-                    <label class="badge badge-gradient-info">UNBLOCK</label>
+                    <label class="badge badge-gradient-info pt-2 pb-2 pr-3 pl-3" (click)="confirmUserBlock(obj._id)">{{ isBlockedUserLoading ? "Please wait..." : obj.deletedStatus === 0 ? "BLOCK" : "UNBLOCK"}}</label>
                   </td>
                 </tr>
               </tbody>

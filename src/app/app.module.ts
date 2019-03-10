@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, PLATFORM_ID, APP_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,6 +11,13 @@ import { LoginComponent } from './admin/auth/login/login.component';
 import { NotFoundComponent } from './admin/auth/not-found/not-found.component';
 import { ForgotPasswordComponent } from './admin/auth/forgot-password/forgot-password.component';
 import { LandingComponent } from './admin/auth/landing/landing.component';
+import { LoaderComponent } from './admin/loader/loader.component';
+import { ResetPasswordComponent } from './admin/dashboard/home/reset-password/reset-password.component';
+
+import { IshaanviApiService } from './admin/ishaanvi-api.service';
+import { IshaanviAuthInterceptorService } from './admin/ishaanvi-auth-interceptor.service';
+import { IshaanviAppDataService } from './admin/ishaanvi-app-data.service';
+import { IshaanviAuthService } from './admin/ishaanvi-auth.service';
 
 @NgModule({
   declarations: [
@@ -18,15 +26,23 @@ import { LandingComponent } from './admin/auth/landing/landing.component';
     LoginComponent,
     NotFoundComponent,
     ForgotPasswordComponent,
-    LandingComponent
+    LandingComponent,
+    LoaderComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'tour-of-heroes' }),
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: IshaanviAuthInterceptorService, multi: true },
+    IshaanviApiService, 
+    IshaanviAppDataService,
+    IshaanviAuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
