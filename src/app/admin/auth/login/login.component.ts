@@ -17,7 +17,7 @@ export class LoginComponent {
   constructor(private fb: FormBuilder, public api: IshaanviApiService, private router: Router, private userInfo: IshaanviAppDataService) {
     this.loginForm = this.fb.group({
       email: ['ttttester101@gmail.com', [Validators.pattern(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/), Validators.required]],
-      password: ['1', [Validators.required]]
+      password: ['872909066', [Validators.required]]
     })
   }
 
@@ -30,7 +30,7 @@ export class LoginComponent {
     this.isLoading = true;
     this.api.login(data).subscribe(res => {
       const { message, data } = res;
-      console.log(res);
+      console.log("res ===> ", res);
       switch (message.toLowerCase()) {
         case this.api.SUCCESS.toLowerCase():
           this.userInfo.setUserInfo(data);
@@ -38,6 +38,9 @@ export class LoginComponent {
           break;
         case this.api.NOT_VALID.toLowerCase():
           swal.fire("Warning", "Email/Password is incorrect, please try again!", "warning");
+          break;
+        case this.api.BLOCKED.toLowerCase():
+          swal.fire("Blocked", "Please contact with your admin!", "warning");
           break;
         default:
           swal.fire("Warning", "Please try again", "warning");

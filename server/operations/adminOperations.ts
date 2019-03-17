@@ -68,7 +68,7 @@ export class AdminOperations {
 
                 const { id, accessToken, userId } = obj;
 
-                users.find({}, { password: 0, salt: 0, accessToken: 0 }).toArray((err, data) => {
+                users.find({ userType: { $ne: 3 } }, { password: 0, salt: 0, accessToken: 0 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -92,7 +92,7 @@ export class AdminOperations {
 
                 const { id, accessToken, userId } = obj;
 
-                users.find({ deletedStatus: AppKeysInstance.BLOCKED }, { password: 0, salt: 0, accessToken: 0 }).toArray((err, data) => {
+                users.find({ deletedStatus: AppKeysInstance.BLOCKED, userType: { $ne: 3 } }, { password: 0, salt: 0, accessToken: 0 }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -157,6 +157,11 @@ export class AdminOperations {
                         $lookup: {
                             from: "products",
                             pipeline: [
+                                {
+                                    $addFields: {
+                                        status: { $convert: { input: "$status", to: "double", onNull: null } },
+                                    }
+                                },
                                 {
                                     $group: {
                                         _id: "products",

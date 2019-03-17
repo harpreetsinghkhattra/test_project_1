@@ -17,6 +17,8 @@ export class BlockedUsersComponent implements OnInit {
   public usersList: UserModel[];
   public isBlockedUserLoading: boolean;
   public selectedUserType: number = ISHAANVI_ALL;
+  public page: any = 1;
+  public maxPageItems: any = 10;
   constructor(
     private api: IshaanviApiService,
     private userInfo: IshaanviAppDataService
@@ -72,7 +74,7 @@ export class BlockedUsersComponent implements OnInit {
 
   confirmUserBlock = (userId: string) => {
     swal.fire({
-      text: "You want to block this user!",
+      text: "You want to unblock this user!",
       title: 'Are you sure?',
       type: 'info',
       showCancelButton: true,
@@ -97,7 +99,7 @@ export class BlockedUsersComponent implements OnInit {
       const { data, message } = res;
       switch (message.toLowerCase()) {
         case this.api.SUCCESS.toLowerCase():
-          swal.fire("Success", "User has been successfully blocked!", "success");
+          swal.fire("Success", "User has been successfully unblocked!", "success");
           this.getBlockedUsers();
           break;
         case this.api.NOVALUE.toLowerCase():

@@ -3,7 +3,8 @@ import { IshaanviApiService } from '../../../ishaanvi-api.service';
 import { UserModel } from '../../../../shared/models/user.model';
 import { IshaanviAppDataService } from '../../../ishaanvi-app-data.service';
 import swal from 'sweetalert2';
-import { ISHAANVI_ALL, ISHAANVI_SELLER, ISHAANVI_CONSUMER } from '../../../../config/config';
+import { ISHAANVI_ALL, ISHAANVI_SELLER, ISHAANVI_CONSUMER, ISHAANVI_BLOCK_USER } from '../../../../config/config';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-users',
@@ -16,15 +17,24 @@ export class UsersComponent implements OnInit {
   public isLoading: boolean;
   public usersList: UserModel[];
   public isBlockedUserLoading: boolean;
+  public page: any = 1;
+  public maxPageItems: any = 10;
   public selectedUserType: number = ISHAANVI_ALL;
   constructor(
     private api: IshaanviApiService,
-    private userInfo: IshaanviAppDataService
+    private userInfo: IshaanviAppDataService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
     this.userData.deserialize(this.userInfo.getUserInfo());
     this.getAllUsers();
+  }
+
+  getUserImage(link) {
+    if (!link) return "/assets/images/profile.png";
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(link);
   }
 
   selectUserType(value: string) {
@@ -70,9 +80,9 @@ export class UsersComponent implements OnInit {
     }, () => this.isLoading = false);
   }
 
-  confirmUserBlock = (userId: string) => {
+  confirmUserBlock = (userId: UserModel) => {
     swal.fire({
-      text: "You want to block this user!",
+      text: `You want to ${userId.deletedStatus === ISHAANVI_BLOCK_USER ? "unblock" : "block"} this user!`,
       title: 'Are you sure?',
       type: 'info',
       showCancelButton: true,
@@ -84,20 +94,20 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  blockUser = (userId: string) => {
+  blockUser = (userId: UserModel) => {
     if (this.isBlockedUserLoading) return;
 
     this.isBlockedUserLoading = true;
     this.api.blockUser({
       id: this.userData._id,
       accessToken: this.userData.userAccessToken,
-      userId: userId
+      userId: userId._id
     }).subscribe(res => {
       console.log(res);
       const { data, message } = res;
       switch (message.toLowerCase()) {
         case this.api.SUCCESS.toLowerCase():
-          swal.fire("Success", "User has been successfully blocked!", "success");
+          swal.fire("Success", `User has been successfully ${ userId.deletedStatus === ISHAANVI_BLOCK_USER ? "unblocked" : "blocked"}!`, "success");
           this.getAllUsers();
           break;
         case this.api.NOVALUE.toLowerCase():

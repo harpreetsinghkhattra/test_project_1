@@ -23,10 +23,16 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var collection = db.collection('users');
-                collection.find({ email: obj.email.toLowerCase(), deletedStatus: 0 }).toArray((err, data) => {
+                collection.find({ email: obj.email.toLowerCase() }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
                         obj.salt = data[0].salt ? data[0].salt : 'any';
+
+                        if (data[0].deletedStatus !== 0) {
+                            CommonJs.close(client, CommonJSInstance.BLOCKED, [], cb);
+                            return;
+                        }
+
                         CommonJs.randomPassword(obj.salt, obj.password, (password, salt) => {
                             collection.find({ email: obj.email.toLowerCase(), password: password }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
                                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -2236,6 +2242,76 @@ export class Operations {
 //             $lookup: {
 //                     from: "products",
 //                     pipeline: [
+//                         {
+//                             $group: {
+//                                _id: "products",
+//                                totalProducts: {
+//                                     $sum: 1
+//                                },
+//                                active: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$status", 1]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }},
+//                                deactivated: {$sum: {
+//                                     $cond: [
+//                                     {
+//                                             $eq: ["$status", 0]
+//                                     },
+//                                     1, 0
+//                                     ]
+//                                  }}
+//                             }
+//                         }
+//                     ],
+//                     as: "products"
+//             }
+//     },
+//     {$unwind: "$products"}
+// ]);
+
+// db.getCollection('users').aggregate([
+//     { $match: { $expr: {
+//             $ne: ["$userType", 3]}
+//         } },
+//     {
+//             $group: {
+//                     _id: {
+//                             $cond: [{
+//                                     $eq: ["$userType", 1]
+//                                 }, "sellers", "consumers"]
+//                         },
+//                      total: { $sum: 1 },
+//                      active: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 0]
+//                             },
+//                             1, 0
+//                             ]
+//                          }},
+//                      deactive: {$sum: {
+//                             $cond: [
+//                             {
+//                                     $eq: ["$deletedStatus", 2]
+//                             },
+//                             1, 0
+//                             ]
+//                          }}
+//             }
+//     },
+//     {
+//             $lookup: {
+//                     from: "products",
+//                     pipeline: [
+//                         {
+//                             $addFields: {
+//                                 status: { $convert: { input: "$status", to: "double", onNull: null } },
+//                             }
+//                         },
 //                         {
 //                             $group: {
 //                                _id: "products",

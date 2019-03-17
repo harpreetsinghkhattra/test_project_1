@@ -19,9 +19,9 @@
           <h4 class="font-weight-normal mb-3">Sellers
             <i class="mdi mdi-chart-line mdi-24px float-right"></i>
           </h4>
-          <h2 class="mb-5">{{getSellerCount()}}</h2>
+          <h2 class="mb-5">{{getSellerCount("")}}</h2>
           <h6 class="card-text">Active {{getSellerCount('active')}}</h6>
-          <h6 class="card-text">Deactive {{getSellerCount('deactive')}}</h6>
+          <h6 class="card-text">Deactive {{getSellerCount('blocked')}}</h6>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
           <h4 class="font-weight-normal mb-3">Consumers
             <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
           </h4>
-          <h2 class="mb-5">{{getConsumerCount()}}</h2>
+          <h2 class="mb-5">{{getConsumerCount("")}}</h2>
           <h6 class="card-text">Active {{getConsumerCount('active')}}</h6>
           <h6 class="card-text">Deactive {{getConsumerCount('blocked')}}</h6>
         </div>
@@ -43,7 +43,7 @@
           <h4 class="font-weight-normal mb-3">Products
             <i class="mdi mdi-diamond mdi-24px float-right"></i>
           </h4>
-          <h2 class="mb-5">{{getProductsCount()}}</h2>
+          <h2 class="mb-5">{{getProductsCount("")}}</h2>
           <h6 class="card-text">Active {{getProductsCount("active")}}</h6>
           <h6 class="card-text">Deactive {{getProductsCount("blocked")}}</h6>
         </div>

@@ -56,9 +56,9 @@
                   <td></td>
                   <td></td>
                 </tr>
-                <tr *ngFor="let obj of usersList;let i = index;">
+                <tr *ngFor="let obj of usersList | paginate: { itemsPerPage: maxPageItems, currentPage: page }">
                   <td>
-                    <img [src]="obj && obj.imageUrl ? obj.imageUrl : '/assets/images/profile.png'" class="mr-2" alt="image">                    {{obj.name}}
+                    <img [src]="obj && obj.imageUrl ? obj.imageUrl : '/assets/images/profile.png'" class="mr-2" alt="image">                    {{obj.email}}
                   </td>
                   <td>
                     {{obj._id}}
@@ -78,6 +78,10 @@
                 </tr>
               </tbody>
             </table>
+            <div class="text-right" *ngIf="usersList && usersList.length >= maxPageItems">
+              <pagination-controls (pageChange)="page = $event" directionLinks="true" autoHide="true" responsive="true" previousLabel="Previous"
+                nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"></pagination-controls>
+            </div>
           </div>
         </div>
       </div>

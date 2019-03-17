@@ -25,8 +25,8 @@ export class LandingComponent implements OnInit {
   }
 
   getSellerCount = (type: string) => {
-    if (this.data && !this.data.length) return 0;
-
+    if (!this.data || (this.data && !this.data.length)) return 0;
+    
     const value = this.data[this.data.findIndex(ele => ele._id === "sellers")];
     switch (type) {
       case "active":
@@ -39,9 +39,10 @@ export class LandingComponent implements OnInit {
   }
 
   getConsumerCount = (type: string) => {
-    if (this.data && !this.data.length) return 0;
+    if (!this.data || (this.data && !this.data.length)) return 0;
 
     const value = this.data[this.data.findIndex(ele => ele._id === "consumers")];
+    
     switch (type) {
       case "active":
         return value.active;
@@ -53,14 +54,16 @@ export class LandingComponent implements OnInit {
   }
 
   getProductsCount = (type: string) => {
-    if (this.data && !this.data.length) return 0;
+    if (!this.data || (this.data && !this.data.length)) return 0;
 
     const value = this.data[this.data.findIndex(ele => ele._id === "consumers")];
+    console.log("data ===> sellers", this.data);
+    
     switch (type) {
       case "active":
         return value.products.active;
       case "blocked":
-        return value.products.deactive;
+        return value.products.deactivated;
       default:
         return value.products.totalProducts;
     }

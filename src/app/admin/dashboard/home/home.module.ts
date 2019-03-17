@@ -12,13 +12,15 @@ import { BlockedUsersComponent } from './blocked-users/blocked-users.component';
 import { PostNotificationComponent } from './post-notification/post-notification.component';
 import { UploadBannerComponent } from './upload-banner/upload-banner.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [HomeComponent, HeaderComponent, SidebarComponent, FooterComponent, LandingComponent, UsersComponent, BlockedUsersComponent, PostNotificationComponent, UploadBannerComponent, ChangePasswordComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxPaginationModule
   ]
 })
 export class HomeModule { }
