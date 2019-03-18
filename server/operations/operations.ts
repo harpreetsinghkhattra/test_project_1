@@ -328,15 +328,15 @@ export class Operations {
                             }
                         };
 
-                        // fcm.send(message, function (err, response) {
-                        //     if (err) {
-                        //         CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                        //     } else {
-                        //         CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
-                        //     }
-                        // });
+                        fcm.send(message, function (err, response) {
+                            if (err) {
+                                CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            } else {
+                                CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
+                            }
+                        });
 
-                        CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        // CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
                     }
                 })
             }
