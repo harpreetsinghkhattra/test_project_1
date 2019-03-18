@@ -985,7 +985,7 @@ export class Operations {
             else {
                 var users = db.collection('users');
 
-                users.find({ _id: new ObjectId(obj.id), deletedStatus: 0 }).toArray((err, data) => {
+                users.find({ _id: new ObjectId(obj.id) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     if (data && data.length !== 0) {
                         users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
