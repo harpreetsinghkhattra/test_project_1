@@ -208,7 +208,8 @@ export class Operations {
                                 });
                             } else CommonJs.close(client, CommonJSInstance.TOKEN_ERROR, [], cb);
                         });
-                    } else this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { salt: 0 } }, client, cb);
+                    } else if (data && data.length && data[0].deletedStatus === 2) CommonJs.close(client, CommonJSInstance.BLOCKED, [], cb);
+                    else this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { salt: 0 } }, client, cb);
                 })
             }
         })
