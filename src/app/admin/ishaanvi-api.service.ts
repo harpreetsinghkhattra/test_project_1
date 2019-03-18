@@ -21,8 +21,8 @@ export class IshaanviApiService {
   public TOKEN_ERROR: string = 'tokenErr';
   public VALIDATE_ERROR: string = 'validationErr';
   public VARIFICATION_ERROR: string = 'verificationErr';
-  // public BASE_URL: string = "http://13.127.188.164/api";
-  public BASE_URL: string = "http://localhost:3000/api";
+  public BASE_URL: string = "http://13.127.188.164/api";
+  // public BASE_URL: string = "http://localhost:3000/api";
   public EMAIL_PRESENT: string = "emailPresent";
   public LOGED_IN: string = "logedIn";
   public LOGED_OUT: string = "logedOut";
