@@ -316,12 +316,6 @@ export class Operations {
                     else {
                         const message = {
                             to: "/topics/ishaanvi_events",
-                            notification: {
-                                title,
-                                body: description,
-                                sound: "default",
-                                color: '#59CAC8'
-                            },
                             "data": {
                                 title,
                                 description
