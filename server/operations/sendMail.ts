@@ -39,9 +39,9 @@ export class SendMail {
         });
 
         var options = {
-            from: 'ISHAANVI<example.com>',
+            from: 'ISHANVI<example.com>',
             to: obj.email,
-            subject: 'ISHAANVI',
+            subject: 'ISHANVI',
             html: `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -428,9 +428,9 @@ export class SendMail {
         });
 
         var options = {
-            from: 'ISHAANVI<example.com>',
+            from: 'ISHANVI<example.com>',
             to: obj.email,
-            subject: 'ISHAANVI',
+            subject: 'ISHANVI',
             html: `
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -818,9 +818,9 @@ export class SendMail {
         });
 
         var options = {
-            from: 'ISHAANVI<example.com>',
+            from: 'ISHANVI<example.com>',
             to: obj.email,
-            subject: 'ISHAANVI',
+            subject: 'ISHANVI',
             html: `
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

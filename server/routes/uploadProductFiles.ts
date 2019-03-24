@@ -18,7 +18,7 @@ var storage = multer.diskStorage({
     filename: (req, file, cb) => {
         var randomNumber = Math.floor(Math.random() * 10000);
         var time = new Date().getTime();
-        let fileName = time + '' + randomNumber + 'ishaanvi.' + file.mimetype.split('/')[1];
+        let fileName = time + '' + randomNumber + 'ishanvi.' + file.mimetype.split('/')[1];
         let imagePath = path.join('/public/uploadProductFiles', fileName);
 
         req.body.images = req.body.images && req.body.images.length ? req.body.images : [];
