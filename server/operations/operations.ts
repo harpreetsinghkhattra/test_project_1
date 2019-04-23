@@ -559,8 +559,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                let { category, area, presentShops, coordinates } = obj;
-                presentShops = presentShops && presentShops.length ? presentShops.map(ele => new ObjectId(ele)) : [];
+                let { area, coordinates } = obj;
 
                 users.aggregate([
                     {
@@ -571,102 +570,32 @@ export class Operations {
                             spherical: true
                         }
                     },
+                    { $sample: { size: 500 } },
                     {
                         $project: {
                             _id: 1,
-                            itemCode: 1,
-                            userId: 1,
+                            category: 1,
                             shopLocation: 1,
-                            business_name: 1,
-                            name: 1,
-                            business_address: 1,
-                            mobile_number: 1,
                             imageUrl: 1,
+                            business_name: 1,
+                            business_address: 1,
                             isShown: {
                                 $and: [
-                                    { $ne: [{ $indexOfArray: [presentShops, "$_id"] }, -1] }
+                                    { $ne: [{ $indexOfArray: [["designers", "garments", "boutiques"], "$category"] }, -1] }
                                 ]
                             }
                         }
                     },
-                    { $match: { isShown: false } },
+                    { $match: { isShown: true } },
+                    { $match: { shopLocation: { $lte: parseInt(area) } } },
                     {
-                        $lookup: {
-                            "from": "products",
-                            "let": { idd: "$_id" },
-                            "pipeline": [
-                                {
-                                    $match:
-                                    {
-                                        $expr:
-                                        {
-                                            $and:
-                                            category === 'all' ?
-                                                [
-                                                    { $eq: ["$userId", "$$idd"] },
-                                                ]
-                                                :
-                                                [
-                                                    { $eq: ["$userId", "$$idd"] },
-                                                    { $ne: [{ $indexOfArray: [category, "$category"] }, -1] }
-                                                ]
-                                        }
-                                    }
-                                },
-                                {
-                                    $lookup: {
-                                        from: "productsRatings",
-                                        let: { id: "$_id" },
-                                        pipeline: [
-                                            {
-                                                $match: {
-                                                    $expr: {
-                                                        $and: [
-                                                            { $eq: ["$$id", "$productId"] }
-                                                        ]
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                $addFields: {
-                                                    rating: { $convert: { input: "$rating", to: "double", onNull: null } },
-                                                }
-                                            },
-                                        ],
-                                        as: 'rating'
-                                    }
-                                },
-                                {
-                                    $addFields: {
-                                        reviews: { $size: "$rating" },
-                                        rating: { $avg: "$rating.rating" }
-                                    }
-                                },
-                                { $sort: { createdTime: -1 } },
-                                { $limit: 6 }
-                            ],
-                            "as": "items"
+                        $group: {
+                            _id: "$category",
+                            values: {
+                                $push: "$$ROOT"
+                            }
                         }
-                    },
-                    {
-                        $project: {
-                            _id: 1,
-                            itemCode: 1,
-                            userId: 1,
-                            shopLocation: 1,
-                            business_name: 1,
-                            name: 1,
-                            business_address: 1,
-                            mobile_number: 1,
-                            imageUrl: 1,
-                            items: 1,
-                            itemsCount: { "$size": { "$ifNull": ["$items", []] } }
-                        }
-                    },
-                    { $sort: { itemsCount: -1 } },
-                    { $match: { itemsCount: { $gte: 1 }, shopLocation: { $lte: parseInt(area) } } },
-                    { $limit: 6 },
-                    { $sample: { size: 6 } }
+                    }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else data.toArray((err, data) => {
@@ -2336,4 +2265,160 @@ export class Operations {
 //             }
 //     },
 //     {$unwind: "$products"}
+// ]);
+
+
+
+//Home Screen query
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     {
+//         $project: {
+//             _id: 1,
+//             itemCode: 1,
+//             userId: 1,
+//             category: 1,
+//             shopLocation: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ "multi brand's" ], "$category"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: true }},
+
+
+
+
+
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {$match: 
+//                     { $expr:
+//                         { $and:
+//                            [
+//                              { $eq: [ "$userId",  "$$idd" ] }
+//                            ]
+//                         }
+//                      }
+//                  },
+//                  {
+//                         $project: {
+//                                 "_id": 1,
+//                                 "userId": 1,
+//                                 "category": 1
+//                          }
+//                  },
+
+
+
+
+
+//                   {
+//                     $lookup: {
+//                         from: "productsRatings",
+//                         let: { id: "$_id" },
+//                         pipeline: [
+//                             {
+//                                 $match: {
+//                                     $expr: {
+//                                         $and: [
+//                                             { $eq: ["$$id", "$productId"] }
+//                                         ]
+//                                     }
+//                                 }
+//                             },
+//                             {
+//                                 $addFields: {
+//                                     rating: { $convert: { input: "$rating", to: "double", onNull: null } },
+//                                 }
+//                             },
+//                         ],
+//                         as: 'rating'
+//                     }
+//                 },
+//                 {
+//                     $addFields: {
+//                         reviews: { $size: "$rating" },
+//                         rating: { $avg: "$rating.rating" }
+//                     }
+//                  },
+
+
+
+
+//                  {$sort: {createdTime: -1}}
+//             ],
+//             "as": "items"
+//         },
+//     },
+//     {
+//         $project:{
+//             _id: 1,
+//             items: 1,
+//             category: 1,
+//             shopLocation: 1,
+//             itemsCount: { "$size": { "$ifNull": ["$items", []] } }
+//         }
+//     },
+//     { $match: { shopLocation: {$lte: 150} }},
+//     { $sample: { size: 6 } },
+
+//     {
+//         $group:{
+//             _id: "$category",
+//             values: {
+//                     $push: "$$ROOT"
+//             }
+//         }
+//     }
+// ]);
+
+
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     { $sample: { size: 500 } },
+//     {
+//         $project: {
+//             _id: 1,
+//             category: 1,
+//             shopLocation: 1,
+//             imageUrl: 1,
+//             business_name: 1,
+//             business_address: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ "designers", "garments", "boutiques" ], "$category"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: true }},
+//     { $match: { shopLocation: {$lte: 150} }},
+//     {
+//         $group:{
+//             _id: "$category",
+//             values: {
+//                     $push: "$$ROOT"
+//             }
+//         }
+//     }
 // ]);

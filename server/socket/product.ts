@@ -28,6 +28,7 @@ export class Product {
         this.searchProduct();
         this.viewProduct();
         this.addProductCount();
+        this.addShopCount();
         this.createComment();
         this.getProductComments();
         this.sendRealTimeP2PMessage();
@@ -149,6 +150,18 @@ export class Product {
                         this.socket.emit('/socket/api/response/addProductCount', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/addProductCount', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Add shop count */
+    addShopCount() {
+        this.socket.on('/socket/api/addShopCount',
+            (data) => Auth.authUsingSocket('addShopCount', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.viewShop(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/addShopCount', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/addShopCount', CommonJs.socketResponse(status, response));
             }));
     }
 

@@ -271,9 +271,115 @@ export class ProductOperations {
                             _id: new ObjectId(productId)
                         }, { $set: { views } }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                            else this.addRecentViewedProduct(obj, cb);
                         })
                     } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Set recent viewed product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static addRecentViewedProduct(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var recentViewedProducts = db.collection('recentViewedProducts');
+                const { id, productId } = obj;
+
+                recentViewedProducts.find({ userId: new ObjectId(id) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length === 0) {
+                        recentViewedProducts.insert({
+                            userId: new ObjectId(id),
+                            products: [new ObjectId(productId)]
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        })
+                    } else {
+                        recentViewedProducts.updateOne({
+                            userId: new ObjectId(id)
+                        }, {
+                                $addToSet: {
+                                    products: new ObjectId(productId)
+                                }
+                            }, (err, data) => {
+                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                            })
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Set shop view count 
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static viewShop(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var users = db.collection('users');
+                const { id, userId } = obj;
+
+                users.find({ _id: new ObjectId(userId) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length > 0) {
+                        const views = data[0].views ? data[0].views + 1 : 1;
+                        users.update({
+                            _id: new ObjectId(userId)
+                        }, { $set: { views } }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else this.addRecentViewedShop(obj, cb);
+                        })
+                    } else CommonJs.close(client, CommonJSInstance.NO_CHANGE, [], cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Set recent viewed product
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static addRecentViewedShop(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var recentViewedProducts = db.collection('recentViewedShop');
+                const { id, userId } = obj;
+
+                recentViewedProducts.find({ userId: new ObjectId(id) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length === 0) {
+                        recentViewedProducts.insert({
+                            userId: new ObjectId(id),
+                            shops: [new ObjectId(userId)]
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                        })
+                    } else {
+                        recentViewedProducts.updateOne({
+                            userId: new ObjectId(id)
+                        }, {
+                                $addToSet: {
+                                    shops: new ObjectId(userId)
+                                }
+                            }, (err, data) => {
+                                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                else CommonJs.close(client, CommonJSInstance.SUCCESS, [], cb);
+                            })
+                    }
                 });
             }
         });
@@ -352,10 +458,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            [
-                                                { $eq: ["$userType", 1] },
-                                                { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
-                                            ]
+                                                [
+                                                    { $eq: ["$userType", 1] },
+                                                    { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
+                                                ]
                                         }
                                     }
                                 },
@@ -385,7 +491,7 @@ export class ProductOperations {
                                 {
                                     $addFields: {
                                         price: { $convert: { input: "$price", to: "double", onNull: null } },
-                                        name: { $toLower: "$name" }
+                                        name: { $convert: { input: { $toLower: "$name" }, to: "string", onNull: null } }
                                     }
                                 },
                                 {
@@ -394,31 +500,31 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            category === "all" && price === "all" ?
-                                                [
-                                                    { $eq: ["$userId", "$$idd"] },
-                                                    { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
-                                                ] :
-                                                category !== "all" && price === "all" ?
+                                                category === "all" && price === "all" ?
                                                     [
                                                         { $eq: ["$userId", "$$idd"] },
-                                                        { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
                                                         { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                                     ] :
-                                                    category === "all" && price !== "all" ?
+                                                    category !== "all" && price === "all" ?
                                                         [
                                                             { $eq: ["$userId", "$$idd"] },
-                                                            { $gte: ["$price", price[0]] },
-                                                            { $lte: ["$price", price[1]] },
-                                                            { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
-                                                        ] :
-                                                        [
-                                                            { $eq: ["$userId", "$$idd"] },
-                                                            { $gte: ["$price", price[0]] },
-                                                            { $lte: ["$price", price[1]] },
                                                             { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
                                                             { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
-                                                        ]
+                                                        ] :
+                                                        category === "all" && price !== "all" ?
+                                                            [
+                                                                { $eq: ["$userId", "$$idd"] },
+                                                                { $gte: ["$price", price[0]] },
+                                                                { $lte: ["$price", price[1]] },
+                                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                            ] :
+                                                            [
+                                                                { $eq: ["$userId", "$$idd"] },
+                                                                { $gte: ["$price", price[0]] },
+                                                                { $lte: ["$price", price[1]] },
+                                                                { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
+                                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                            ]
                                         }
                                     }
                                 },
@@ -787,10 +893,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $or:
-                                            [
-                                                { $eq: ["$userId", "$$idd"] },
-                                                { $eq: ["$followedId", "$$idd"] }
-                                            ]
+                                                [
+                                                    { $eq: ["$userId", "$$idd"] },
+                                                    { $eq: ["$followedId", "$$idd"] }
+                                                ]
                                         }
                                     }
                                 },
@@ -842,10 +948,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            [
-                                                { $eq: ["$userId", new ObjectId(id)] },
-                                                { $eq: ["$followedId", new ObjectId(userId)] },
-                                            ]
+                                                [
+                                                    { $eq: ["$userId", new ObjectId(id)] },
+                                                    { $eq: ["$followedId", new ObjectId(userId)] },
+                                                ]
                                         }
                                     }
                                 },
@@ -912,10 +1018,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            [
-                                                { $eq: ["sale", "$selectType"] },
-                                                { $eq: ["$userId", "$$idd"] }
-                                            ]
+                                                [
+                                                    { $eq: ["sale", "$selectType"] },
+                                                    { $eq: ["$userId", "$$idd"] }
+                                                ]
                                         }
                                     }
                                 },
@@ -988,10 +1094,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            [
-                                                { $eq: ["new", "$selectType"] },
-                                                { $eq: ["$userId", "$$idd"] }
-                                            ]
+                                                [
+                                                    { $eq: ["new", "$selectType"] },
+                                                    { $eq: ["$userId", "$$idd"] }
+                                                ]
                                         }
                                     }
                                 },
@@ -1035,10 +1141,10 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                            [
-                                                { $eq: ["popular", "$selectType"] },
-                                                { $eq: ["$userId", "$$idd"] }
-                                            ]
+                                                [
+                                                    { $eq: ["popular", "$selectType"] },
+                                                    { $eq: ["$userId", "$$idd"] }
+                                                ]
                                         }
                                     }
                                 },
