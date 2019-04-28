@@ -581,7 +581,7 @@ export class Operations {
                             business_address: 1,
                             isShown: {
                                 $and: [
-                                    { $ne: [{ $indexOfArray: [["designers", "garments", "boutiques"], "$category"] }, -1] }
+                                    { $ne: [{ $indexOfArray: [["designers \n(men, woman)", "garments", "boutiques"], "$category"] }, -1] }
                                 ]
                             }
                         }
