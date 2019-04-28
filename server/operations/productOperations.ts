@@ -501,30 +501,62 @@ export class ProductOperations {
                                         {
                                             $and:
                                                 category === "all" && price === "all" ?
-                                                    [
-                                                        { $eq: ["$userId", "$$idd"] },
-                                                        { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
-                                                    ] :
-                                                    category !== "all" && price === "all" ?
+
+                                                    searchValue ?
                                                         [
+                                                            { $eq: ["$userId", "$$idd"] },
+                                                            { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                        ] :
+                                                        [
+                                                            { $eq: ["$userId", "$$idd"] },
+                                                        ]
+
+
+                                                    :
+                                                    category !== "all" && price === "all" ?
+
+                                                        searchValue ? [
                                                             { $eq: ["$userId", "$$idd"] },
                                                             { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
                                                             { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                                         ] :
-                                                        category === "all" && price !== "all" ?
                                                             [
                                                                 { $eq: ["$userId", "$$idd"] },
-                                                                { $gte: ["$price", price[0]] },
-                                                                { $lte: ["$price", price[1]] },
-                                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
-                                                            ] :
-                                                            [
-                                                                { $eq: ["$userId", "$$idd"] },
-                                                                { $gte: ["$price", price[0]] },
-                                                                { $lte: ["$price", price[1]] },
                                                                 { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
-                                                                { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
                                                             ]
+
+                                                        :
+                                                        category === "all" && price !== "all" ?
+
+                                                            searchValue ?
+                                                                [
+                                                                    { $eq: ["$userId", "$$idd"] },
+                                                                    { $gte: ["$price", price[0]] },
+                                                                    { $lte: ["$price", price[1]] },
+                                                                    { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                                ] :
+                                                                [
+                                                                    { $eq: ["$userId", "$$idd"] },
+                                                                    { $gte: ["$price", price[0]] },
+                                                                    { $lte: ["$price", price[1]] },
+                                                                ]
+
+                                                            :
+                                                            searchValue ?
+                                                                [
+                                                                    { $eq: ["$userId", "$$idd"] },
+                                                                    { $gte: ["$price", price[0]] },
+                                                                    { $lte: ["$price", price[1]] },
+                                                                    { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
+                                                                    { $ne: [{ $indexOfCP: ["$name", searchValue] }, -1] }
+                                                                ] :
+                                                                [
+                                                                    { $eq: ["$userId", "$$idd"] },
+                                                                    { $gte: ["$price", price[0]] },
+                                                                    { $lte: ["$price", price[1]] },
+                                                                    { $ne: [{ $indexOfArray: [category, "$category"] }, -1] },
+                                                                ]
+
                                         }
                                     }
                                 },

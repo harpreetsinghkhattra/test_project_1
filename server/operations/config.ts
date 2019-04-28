@@ -27,7 +27,7 @@ module.exports = {
         getHomeItems: ["id", "accessToken", "area", "coordinates"],
         followOrUnfollowUser: ["id", "accessToken", "sellerId"],
         followUser: ["id", "accessToken", "sellerId"],
-        search: ["id", "accessToken", "searchValue", "category", "price", "coordinates", "area"],
+        search: ["id", "accessToken", "category", "price", "coordinates", "area"],
         viewProduct: ["id", "accessToken", "productId", "coordinates", "area"],
         addProductCount: ["id", "accessToken", "productId"],
         addShopCount: ["id", "accessToken", "userId"],
