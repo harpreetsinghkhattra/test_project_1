@@ -458,10 +458,16 @@ export class ProductOperations {
                                         $expr:
                                         {
                                             $and:
-                                                [
-                                                    { $eq: ["$userType", 1] },
-                                                    { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
-                                                ]
+                                                category === "all" ?
+                                                    [
+                                                        { $eq: ["$userType", 1] },
+                                                        { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
+                                                    ]
+                                                    : [
+                                                        { $eq: ["$userType", 1] },
+                                                        { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] },
+                                                        { $ne: [{ $indexOfArray: [category, "$category"] }, -1] }
+                                                    ]
                                         }
                                     }
                                 },
@@ -616,11 +622,18 @@ export class ProductOperations {
                                 },
                                 { $sort: { createdTime: -1 } }
                             ],
-                            "as": "product"
+                            "as": "products"
                         }
                     },
                     { $match: { shopLocation: { $lte: area } } },
-                    { $unwind: "$product" }
+                    { $unwind: { path: "$products", preserveNullAndEmptyArrays: true } },
+                    {
+                        $group: {
+                            _id: "$userType",
+                            users: { $first: "$users" },
+                            product: { $push: "$products" }
+                        }
+                    }
                 ], (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else data.toArray((err, data) => {

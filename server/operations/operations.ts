@@ -2422,3 +2422,160 @@ export class Operations {
 //         }
 //     }
 // ]);
+
+
+
+//Search api
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier: 1 / 1000,
+//             spherical: true
+//         }
+//     },
+//     {
+//         $project: {
+//             _id: 1,
+//             mobile_number: 1,
+//             imageUrl: 1,
+//             userType: "1",
+//             shopLocation: 1
+//         }
+//     },
+//     {
+//         $lookup: {
+//             "from": "users",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {
+//                     $addFields: {
+//                         name: { $toLower: "$name" }
+//                     }
+//                 },
+//                 {
+//                     $match:
+//                     {
+//                         $expr:
+//                         {
+//                             $and:
+//                                 [
+//                                     { $eq: ["$userType", 1] },
+//                                     { $ne: [{ $indexOfCP: ["$name", "mohit"] }, -1] }
+//                                 ]
+//                         }
+//                     }
+//                 },
+//                 {
+//                     $project: {
+//                         _id: 1,
+//                         itemCode: 1,
+//                         userId: 1,
+//                         shopLocation: 1,
+//                         business_name: 1,
+//                         name: 1,
+//                         business_address: 1,
+//                         mobile_number: 1,
+//                         imageUrl: 1
+//                     }
+//                 },
+//                 { $sort: { createdTime: -1 } }
+//             ],
+//             "as": "users"
+//         }
+//     },
+//     {
+//         $lookup: {
+//             "from": "products",
+//             "let": { idd: "$_id" },
+//             "pipeline": [
+//                 {
+//                     $addFields: {
+//                         price: { $convert: { input: "$price", to: "double", onNull: null } },
+//                         name: { $convert: { input: { $toLower: "$name" }, to: "string", onNull: null } }
+//                     }
+//                 },
+//                 {
+//                     $match:
+//                     {
+//                         $expr:
+//                         {
+//                             $and:
+//                                 [
+//                                     { $eq: ["$userId", "$$idd"] },
+//                                     { $ne: [{ $indexOfCP: ["$name", "mohit"] }, -1] }
+//                                 ]
+
+//                         }
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: "users",
+//                         let: { id: "$userId" },
+//                         pipeline: [
+//                             {
+//                                 $match: {
+//                                     $expr: {
+//                                         $and: [
+//                                             { $eq: ["$$id", "$_id"] }
+//                                         ]
+//                                     }
+//                                 }
+//                             },
+//                             {
+//                                 $project: {
+//                                     _id: 1,
+//                                     mobile_number: 1,
+//                                     imageUrl: 1
+//                                 }
+//                             }
+//                         ],
+//                         as: 'userInfo'
+//                     }
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: "productsRatings",
+//                         let: { id: "$_id" },
+//                         pipeline: [
+//                             {
+//                                 $addFields: {
+//                                     rating: { $convert: { input: "$rating", to: "double", onNull: null } }
+//                                 }
+//                             },
+//                             {
+//                                 $match: {
+//                                     $expr: {
+//                                         $and: [
+//                                             { $eq: ["$$id", "$productId"] }
+//                                         ]
+//                                     }
+//                                 }
+//                             }
+//                         ],
+//                         as: 'rating'
+//                     }
+//                 },
+//                 {
+//                     $addFields: {
+//                         reviews: { $size: "$rating" },
+//                         rating: { $avg: "$rating.rating" }
+//                     }
+//                 },
+//                 { $sort: { createdTime: -1 } } 
+//             ],
+//             "as": "products"
+//         }
+//     },
+//     { $match: { shopLocation: { $lte: 500 } } },
+//     { $unwind: { path: "$products", preserveNullAndEmptyArrays: true }},
+//     {
+//        $group: {
+//             _id: "$userType",
+//             users: { $first: "$users" },
+//             product: { $push: "$products" }
+//        }   
+//     }
+// ]);
