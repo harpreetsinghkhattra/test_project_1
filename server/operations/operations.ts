@@ -559,7 +559,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                let { area, coordinates } = obj;
+                let { area, coordinates, id } = obj;
 
                 users.aggregate([
                     {
@@ -579,6 +579,7 @@ export class Operations {
                             imageUrl: 1,
                             business_name: 1,
                             business_address: 1,
+                            views: 1,
                             isShown: {
                                 $and: [
                                     { $ne: [{ $indexOfArray: [["multi brand's", "garments", "boutiques"], "$category"] }, -1] }
@@ -594,6 +595,98 @@ export class Operations {
                             values: {
                                 $push: "$$ROOT"
                             }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "recentViewedShop",
+                            let: {},
+                            pipeline: [
+                                {
+                                    $match: {
+                                        userId: id
+                                    }
+                                },
+                                {
+                                    $unwind: "$shops"
+                                },
+                                {
+                                    $lookup: {
+                                        from: "users",
+                                        let: { shopId: "$shops" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: { $eq: ["$_id", "$$shopId"] }
+                                                }
+                                            },
+                                            {
+                                                $project: {
+                                                    _id: 1,
+                                                    category: 1,
+                                                    shopLocation: 1,
+                                                    imageUrl: 1,
+                                                    business_name: 1,
+                                                    business_address: 1,
+                                                    views: 1
+                                                }
+                                            }
+                                        ],
+                                        as: "shopDetail"
+                                    }
+                                },
+                                { "$unwind": "$shopDetail" },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        userId: 1,
+                                        shopDetail: 1,
+                                        category: "recentViewedShops"
+                                    }
+                                }
+                            ],
+                            as: "recentViewedShops"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "recentViewedProducts",
+                            let: {},
+                            pipeline: [
+                                {
+                                    $match: {
+                                        userId: id
+                                    }
+                                },
+                                {
+                                    $unwind: "$products"
+                                },
+                                {
+                                    $lookup: {
+                                        from: "products",
+                                        let: { productId: "$products" },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: { $eq: ["$_id", "$$productId"] }
+                                                }
+                                            }
+                                        ],
+                                        as: "productDetail"
+                                    }
+                                },
+                                { "$unwind": "$productDetail" },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        userId: 1,
+                                        products: 1,
+                                        productDetail: 1,
+                                        category: "recentViewedShops"
+                                    }
+                                }
+                            ],
+                            as: "recentViewedProducts"
                         }
                     }
                 ], (err, data) => {
@@ -2578,4 +2671,124 @@ export class Operations {
 //             product: { $push: "$products" }
 //        }   
 //     }
+// ]);
+
+
+// Home api
+// db.getCollection('users').aggregate([
+//     {
+//         $geoNear: {
+//             near: { coordinates: [ 30.6184854, 76.3649714 ] },
+//             distanceField: "shopLocation",
+//             distanceMultiplier	: 1/1000,
+//             spherical: true
+//         }
+//     },
+//     { $sample: { size: 500 } },
+//     {
+//         $project: {
+//             _id: 1,
+//             category: 1,
+//             shopLocation: 1,
+//             imageUrl: 1,
+//             business_name: 1,
+//             business_address: 1,
+//             isShown: { 
+//                 $and: [
+//                     {$ne: [ { $indexOfArray: [ [ "designers", "garments", "boutiques" ], "$category"] }, -1 ]}
+//                 ] 
+//             }
+//         }
+//     },
+//     { $match: { isShown: true }},
+//     { $match: { shopLocation: {$lte: 150} }},
+//     {
+//         $group:{
+//             _id: "$category",
+//             values: {
+//                     $push: "$$ROOT"
+//             }
+//         }
+//     }, 
+//     {
+//       $lookup: {
+//             from: "recentViewedShop",
+//             let: {  },
+//             pipeline: [
+//                 {
+//                     $match: {
+//                             userId: ObjectId("5badfa830a1ccd0013bfb0a3")
+//                     }
+//                 },
+//                 {
+//                     $unwind: "$shops"
+//                 },
+//                 {
+//                     $lookup: {
+//                         from: "users",
+//                         let: { shopId: "$shops" },
+//                         pipeline: [
+//                             {
+//                                 $match: {
+//                                     $expr:{ $eq: ["$_id", "$$shopId"] }
+//                                 }
+//                             }
+//                         ],
+//                         as: "shopDetail"
+//                     }
+//                 },
+//                 { "$unwind": "$shopDetail" },
+//                 {
+//                     $project: {
+//                         _id: 1,
+//                         userId: 1,
+//                         shopDetail: 1,
+//                         category: "recentViewedShops"
+//                     }
+//                 }
+//             ],
+//             as: "recentViewedShops"
+//           }
+//       },
+//       {
+//           $lookup: {
+//                 from: "recentViewedProducts",
+//                 let: {  },
+//                 pipeline: [
+//                     {
+//                         $match: {
+//                             userId: ObjectId("5bab70a3fa09b30013cebe4e")
+//                         }
+//                     },
+//                     {
+//                         $unwind: "$products"
+//                     },
+//                     {
+//                         $lookup: {
+//                             from: "products",
+//                             let: { productId: "$products" },
+//                             pipeline: [
+//                                 {
+//                                     $match: {
+//                                         $expr:{ $eq: ["$_id", "$$productId"] }
+//                                     }
+//                                 }
+//                             ],
+//                             as: "productDetail"
+//                         }
+//                     },
+//                     { "$unwind": "$productDetail" },
+//                     {
+//                         $project: {
+//                             _id: 1,
+//                             userId: 1,
+//                             products: 1,
+//                             productDetail: 1,
+//                             category: "recentViewedShops"
+//                     }
+//                 }
+//                 ],
+//                 as: "recentViewedProducts"
+//           }
+//       }
 // ]);

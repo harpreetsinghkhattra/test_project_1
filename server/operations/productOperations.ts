@@ -449,7 +449,7 @@ export class ProductOperations {
                             "pipeline": [
                                 {
                                     $addFields: {
-                                        name: { $toLower: "$name" }
+                                        business_name: { $toLower: "$business_name" }
                                     }
                                 },
                                 {
@@ -461,11 +461,11 @@ export class ProductOperations {
                                                 category === "all" ?
                                                     [
                                                         { $eq: ["$userType", 1] },
-                                                        { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] }
+                                                        { $ne: [{ $indexOfCP: ["$business_name", searchValue.toLowerCase()] }, -1] }
                                                     ]
                                                     : [
                                                         { $eq: ["$userType", 1] },
-                                                        { $ne: [{ $indexOfCP: ["$name", searchValue.toLowerCase()] }, -1] },
+                                                        { $ne: [{ $indexOfCP: ["$business_name", searchValue.toLowerCase()] }, -1] },
                                                         { $ne: [{ $indexOfArray: [category, "$category"] }, -1] }
                                                     ]
                                         }
@@ -479,9 +479,12 @@ export class ProductOperations {
                                         shopLocation: 1,
                                         business_name: 1,
                                         name: 1,
+                                        email: 1,
+                                        category: 1,
                                         business_address: 1,
                                         mobile_number: 1,
-                                        imageUrl: 1
+                                        imageUrl: 1,
+                                        views: 1
                                     }
                                 },
                                 { $sort: { createdTime: -1 } },
