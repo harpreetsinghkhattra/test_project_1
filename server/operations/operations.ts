@@ -604,7 +604,7 @@ export class Operations {
                             pipeline: [
                                 {
                                     $match: {
-                                        userId: id
+                                        userId: new ObjectId(id)
                                     }
                                 },
                                 {
@@ -655,7 +655,7 @@ export class Operations {
                             pipeline: [
                                 {
                                     $match: {
-                                        userId: id
+                                        userId: new ObjectId(id)
                                     }
                                 },
                                 {
