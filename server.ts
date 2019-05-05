@@ -42,6 +42,9 @@ app.use(function(req, res, next) {
 app.set('view engine', 'html');
 app.set('views', join(DIST_FOLDER, 'isshanvi'));
 
+app.use('/share/*', (req, res) => {
+    res.redirect("https://play.google.com/store/apps/details?id=com.isshanvi");
+});
 app.use('/api', router);
 
 app.get('*', (req, res) => {
