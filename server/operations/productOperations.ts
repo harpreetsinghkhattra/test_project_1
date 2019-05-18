@@ -255,7 +255,7 @@ export class ProductOperations {
                 var products = db.collection('products');
                 const { id, itemCode, images, status } = obj;
 
-                products.update({ userId: new ObjectId(id), itemCode }, {
+                products.updateOne({ userId: new ObjectId(id), itemCode }, {
                     $set: {
                         images,
                         status,

@@ -162,7 +162,7 @@ export class Operations {
                                                     token: randomeToken
                                                 }
 
-                                                collection.update({ email: obj.email.toLowerCase() }, {
+                                                collection.updateOne({ email: obj.email.toLowerCase() }, {
                                                     $set: {
                                                         verificationToken: token,
                                                         verificationCode: 0,
@@ -259,7 +259,7 @@ export class Operations {
                                 token: randomeToken
                             }
 
-                            collection.update({ email: obj.email.toLowerCase() }, {
+                            collection.updateOne({ email: obj.email.toLowerCase() }, {
                                 $set: {
                                     verificationToken: token,
                                     verificationCode: 0,
@@ -429,7 +429,7 @@ export class Operations {
                 friendRequest.find({ _id: new ObjectId(obj.request_id), status: AppKeysInstance.AWAITING }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (data && data.length !== 0) {
-                        friendRequest.update({ _id: new ObjectId(obj.request_id), status: AppKeysInstance.AWAITING }, {
+                        friendRequest.updateOne({ _id: new ObjectId(obj.request_id), status: AppKeysInstance.AWAITING }, {
                             $set: {
                                 status: obj.status,
                                 updatedTime: CommonJSInstance.EPOCH_TIME
@@ -458,7 +458,7 @@ export class Operations {
                 friends.find({ uid: new ObjectId(obj.uid) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (data && data.length !== 0) {
-                        friends.update({ uid: new ObjectId(obj.uid), "friends.id": { $ne: new ObjectId(obj.fid) } }, {
+                        friends.updateOne({ uid: new ObjectId(obj.uid), "friends.id": { $ne: new ObjectId(obj.fid) } }, {
                             $addToSet: {
                                 friends: {
                                     id: new ObjectId(obj.fid),
@@ -778,7 +778,7 @@ export class Operations {
                     collection.find({ email: obj.email.toLowerCase(), verificationCode: 0, verificationToken: token }).toArray((err, data) => {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                         if (data && data.length !== 0) {
-                            collection.update({ email: obj.email.toLowerCase(), verificationCode: 0, verificationToken: token }, {
+                            collection.updateOne({ email: obj.email.toLowerCase(), verificationCode: 0, verificationToken: token }, {
                                 $set: {
                                     verificationCode: 1,
                                     verificationToken: null,
@@ -811,7 +811,7 @@ export class Operations {
                         users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                             if (data && data.length !== 0) {
-                                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                                users.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
                                         name: obj.name,
                                         email: obj.email.toLowerCase(),
@@ -833,7 +833,7 @@ export class Operations {
                         users.find({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }).toArray((err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                             if (data && data.length !== 0) {
-                                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                                users.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
                                         email: obj.email.toLowerCase(),
                                         name: obj.name,
@@ -858,7 +858,7 @@ export class Operations {
                                                 token: randomeToken
                                             }
 
-                                            users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken, email: obj.email.toLowerCase() }, {
+                                            users.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken, email: obj.email.toLowerCase() }, {
                                                 $set: {
                                                     verificationToken: token,
                                                     verificationCode: 0,
@@ -891,7 +891,7 @@ export class Operations {
                 var users = db.collection('users');
                 this.isEmailPresentInAnotherAccountsExceptCurrentOne(obj.id, obj.email, obj.mobile_number, (status) => {
                     if (status === CommonJSInstance.NO_CHANGE || status === CommonJSInstance.CHANGE) {
-                        users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                        users.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                             $set: {
                                 email: obj.email.toLowerCase(),
                                 mobile_number: obj.mobile_number,
@@ -921,7 +921,7 @@ export class Operations {
             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var users = db.collection('users');
-                users.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                users.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                     $set: {
                         imageUrl: obj.imagePath,
                         updatedTime: CommonJSInstance.EPOCH_TIME
@@ -1004,7 +1004,7 @@ export class Operations {
                     if (data && data.length !== 0) {
                         CommonJs.generateToken(obj.id.toLowerCase(), (TOKEN, salt) => {
                             if (TOKEN) {
-                                collection.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
+                                collection.updateOne({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
                                         userAccessToken: TOKEN,
                                         deviceToken: null,
