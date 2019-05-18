@@ -31,6 +31,7 @@ var upload = multer({ storage: storage }).any();
 
 router.post('/uploadProductFiles', (req, res, next) =>
     upload(req, res, (err, data) => {
+        console.log("uploadProduct ===> check", err, data);
         if (err) CommonJs.httpResponse(req, res, CommonJsInstance.ERROR, err);
         else next();
     }),

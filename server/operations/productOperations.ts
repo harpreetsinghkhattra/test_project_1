@@ -262,6 +262,7 @@ export class ProductOperations {
                         updatedTime: CommonJSInstance.EPOCH_TIME
                     }
                 }, (err, data) => {
+                    console.log("error while saving data ===> ", err, data);
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
                     else {
                         // this.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
