@@ -108,6 +108,7 @@ export class ProductOperations {
             else data.toArray((err, data) => {
                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                 else {
+                    console.log("Follower users ===> ", data);
                     products.find({ userId: new ObjectId(id), itemCode }).toArray((err, productData) => {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                         else if (productData && productData.length) {
@@ -125,6 +126,7 @@ export class ProductOperations {
                             };
 
                             let that = this;
+                            console.log("Notification data ===> ", message);
                             Operations.sendAddProductNotification(message, function (err, response) {
                                 if (err) {
                                     CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
@@ -250,7 +252,7 @@ export class ProductOperations {
      */
     static editProductFiles(obj, cb) {
         Connection.connect((err, db, client) => {
-            if (err) CommonJs.close(client, CommonJSInstance.ERROR, { mongodb: err }, cb);
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
             else {
                 var products = db.collection('products');
                 const { id, itemCode, images, status } = obj;
