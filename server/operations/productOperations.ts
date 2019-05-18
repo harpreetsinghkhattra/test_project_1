@@ -128,6 +128,7 @@ export class ProductOperations {
                             let that = this;
                             console.log("Notification data ===> ", message);
                             Operations.sendAddProductNotification(message, function (err, response) {
+                                console.log("Notification data ===> error", err, response);
                                 if (err) {
                                     CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                                 } else {
