@@ -108,7 +108,6 @@ export class ProductOperations {
             else data.toArray((err, data) => {
                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                 else {
-                    console.log("Follower users ===> ", data);
                     products.find({ userId: new ObjectId(id), itemCode }).toArray((err, productData) => {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                         else if (productData && productData.length) {
@@ -127,9 +126,7 @@ export class ProductOperations {
                                 };
 
                                 let that = this;
-                                console.log("Notification data ===> ", message);
                                 Operations.sendAddProductNotification(message, function (err, response) {
-                                    console.log("Notification data ===> error", err, response);
                                     if (err) {
                                         CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                                     } else {
@@ -269,7 +266,6 @@ export class ProductOperations {
                         updatedTime: CommonJSInstance.EPOCH_TIME
                     }
                 }, (err, data) => {
-                    console.log("error while saving data ===> ", err, data);
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
                     else {
                         // this.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
