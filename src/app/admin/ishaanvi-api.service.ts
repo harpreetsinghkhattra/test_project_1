@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest, ForgetPasswordRequest, ResetPasswordRequest, RefundBookingAmount, AddPackage, DeletePackage, UpdatePackage, SetCommissionRate, PreRegisterEmail, CancelSubscription, FinancialReportRequest, GetUserRequest, LogoutRequest, GetAllUsersRequest, BlockUser, GetBlockedUsers, SendNotificationRequest, UploadImagesRequest, GetHomeAdminData } from './request.interface';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Response } from './response.interface';
 
 
@@ -91,5 +93,12 @@ export class IshaanviApiService {
   /** Get home data */
   getTotalUsersAndProducts(data: GetHomeAdminData): Observable<any> {
     return this.http.post(`${this.BASE_URL}/getTotalUsersAndProducts`, data);
+  }
+
+  /** Get image */
+  getImage(url: string) {
+    return this.http.get(url, {
+      responseType: 'blob'
+    })
   }
 }

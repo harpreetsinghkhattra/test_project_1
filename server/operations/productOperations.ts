@@ -4,6 +4,7 @@ import { ObjectId, ObjectID } from 'mongodb';
 import { SendMail } from './sendMail';
 import { AppKeys } from '../utils/AppKeys';
 import { SendSMS } from './sendSMS';
+import { Operations } from './operations';
 const CommonJSInstance = new CommonJs();
 const AppKeysInstance = new AppKeys();
 
@@ -54,6 +55,89 @@ export class ProductOperations {
                 })
             }
         })
+    }
+
+    /**
+     * Send notifications to followers
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static sendNotificationWhileProductAdd(client, db, obj, cb) {
+        var userFollow = db.collection('userFollow');
+        let products = db.collection("products");
+
+        const { id, itemCode, images, status } = obj;
+
+        userFollow.aggregate([
+            {
+                $match: { userId: ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$followedId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$_id", "$$userId"] },
+                                        { $ifNull: ["$deviceToken", false] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "userData"
+                }
+            },
+            {
+                $unwind: { path: "$userData", preserveNullAndEmptyArrays: true }
+            },
+            {
+                $match: {
+                    $expr: {
+                        $and: [
+                            { $ifNull: ["$userData", false] }
+                        ]
+                    }
+                }
+            }
+        ], (err, data) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else data.toArray((err, data) => {
+                if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                else {
+                    products.find({ userId: new ObjectId(id), itemCode }).toArray((err, productData) => {
+                        if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                        else if (productData && productData.length) {
+                            productData = productData[0];
+                            const deviceTokens = data && data.length ? data.map(ele => ele.userData.deviceToken) : []
+                            const message = {
+                                registration_ids: deviceTokens,
+                                "data": {
+                                    title: productData && productData.name ? productData.name : "NA",
+                                    description: productData && productData.description ? productData.description : "NA",
+                                    image: images && images.length ? "http:/13.127.188.164/public/uploadProductFiles/15437477174048544ishaanvi.png" : "",
+                                    productId: "5c03b87bff3b220805004dd9",
+                                    notification_type: "product"
+                                }
+                            };
+
+                            let that = this;
+                            Operations.sendAddProductNotification(message, function (err, response) {
+                                if (err) {
+                                    CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                } else {
+                                    // CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
+                                    that.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
+                                }
+                            });
+                        } else CommonJs.close(client, CommonJSInstance.NOVALUE, { message: "No product found" }, cb);
+                    });
+                }
+            });
+        });
     }
 
     /**
@@ -179,7 +263,10 @@ export class ProductOperations {
                     }
                 }, (err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb)
-                    else this.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
+                    else {
+                        // this.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
+                        this.sendNotificationWhileProductAdd(client, db, obj, cb);
+                    }
                 });
             }
         });

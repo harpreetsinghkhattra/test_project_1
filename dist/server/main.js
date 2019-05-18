@@ -2528,6 +2528,12 @@ var IshaanviApiService = /** @class */ (function () {
     IshaanviApiService.prototype.getTotalUsersAndProducts = function (data) {
         return this.http.post(this.BASE_URL + "/getTotalUsersAndProducts", data);
     };
+    /** Get image */
+    IshaanviApiService.prototype.getImage = function (url) {
+        return this.http.get(url, {
+            responseType: 'blob'
+        });
+    };
     IshaanviApiService.ngInjectableDef = i0.defineInjectable({ factory: function IshaanviApiService_Factory() { return new IshaanviApiService(i0.inject(i1.HttpClient)); }, token: IshaanviApiService, providedIn: "root" });
     return IshaanviApiService;
 }());

@@ -22,7 +22,7 @@ var storage = multer.diskStorage({
         let imagePath = path.join('/public/uploadProductFiles', fileName);
 
         req.body.images = req.body.images && req.body.images.length ? req.body.images : [];
-        req.body.images.push(path.join(CommonJsInstance.BASE_URL, imagePath));
+        req.body.images.push(path.join(CommonJsInstance.BASE_URL, imagePath).replace('http:/13.127.188.164', 'http://13.127.188.164'));
         cb(null, fileName);
     }
 });

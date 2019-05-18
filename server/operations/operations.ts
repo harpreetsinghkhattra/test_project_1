@@ -9,7 +9,7 @@ const CommonJSInstance = new CommonJs();
 const AppKeysInstance = new AppKeys();
 var FCM = require('fcm-node')
 var serverKey = require('../ishaanvi-1adfe-firebase-adminsdk-29s1y-43891fe706.json') //put the generated private key path here    
-var fcm = new FCM(serverKey)
+var fcm = new FCM(serverKey);
 
 export class Operations {
 
@@ -37,17 +37,35 @@ export class Operations {
                             collection.find({ email: obj.email.toLowerCase(), password: password }, { projection: { password: 0, salt: 0 } }).toArray((err, data) => {
                                 if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                                 else if (data && data.length !== 0) {
-                                    if (data[0] && (data[0].verificationCode === 1 || data[0].userType === 2)) {
-                                        CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
-                                    } else {
-                                        this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb);
-                                    }
+                                    this.updateDeviceToken({ email: obj.email.toLowerCase() }, collection, obj.deviceToken, client, () => {
+                                        if (data[0] && (data[0].verificationCode === 1 || data[0].userType === 2)) {
+                                            CommonJs.close(client, CommonJSInstance.SUCCESS, data[0], cb);
+                                        } else {
+                                            this.getCollectionData({ email: obj.email.toLowerCase() }, collection, { projection: { password: 0, salt: 0 } }, client, cb);
+                                        }
+                                    });
                                 } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                             })
                         });
                     } else CommonJs.close(client, CommonJSInstance.NOT_VALID, [], cb);
                 });
             }
+        })
+    }
+
+    /**
+     * Update device token
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static updateDeviceToken(obj, user, token, client, cb) {
+        user.updateOne(obj, {
+            $set: {
+                deviceToken: token ? token : null
+            }
+        }, (err, data) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else cb();
         })
     }
 
@@ -194,6 +212,7 @@ export class Operations {
                                     imageUrl: obj.imageUrl,
                                     userId: obj.userId,
                                     name: obj.name,
+                                    deviceToken: obj.deviceToken ? obj.deviceToken : null,
                                     status: 0,
                                     deletedStatus: 0,
                                     userAccessToken: TOKEN,
@@ -335,6 +354,15 @@ export class Operations {
                 })
             }
         })
+    }
+
+    /**
+     * Send add product notification
+     * @param obj Object
+     * @param cb function
+     */
+    static sendAddProductNotification = (message, cb) => {
+        fcm.send(message, cb);
     }
 
     /**
@@ -979,6 +1007,7 @@ export class Operations {
                                 collection.update({ _id: new ObjectId(obj.id), userAccessToken: obj.accessToken }, {
                                     $set: {
                                         userAccessToken: TOKEN,
+                                        deviceToken: null,
                                         updatedTime: new Date().getTime()
                                     }
                                 }, (err, success) => {
@@ -2792,3 +2821,41 @@ export class Operations {
 //           }
 //       }
 // ]);
+
+//Get follower list to send notification
+// db.getCollection('userFollow').aggregate([
+//     {
+//         $match: { userId: ObjectId("5bac7bfe9ef04700133af0c7") }
+//     },
+//     {
+//         $lookup: {
+//             from: "users",
+//             let: { userId: "$followedId" },
+//             pipeline: [
+//                 {
+//                     $match: { 
+//                         $expr: {
+//                                $and: [
+//                                     { $eq: ["$_id", "$$userId"] },
+//                                     { $ifNull: ["$deviceToken", false] }
+//                                 ]
+//                         }
+//                     }
+//                 }
+//             ],
+//             as: "userData"
+//         }
+//     },
+//     {
+//         $unwind: { path: "$userData", preserveNullAndEmptyArrays: true }
+//     },
+//     {
+//         $match: { 
+//             $expr: {
+//                    $and: [
+//                         { $ifNull: ["$userData", false] }
+//                     ]
+//             }
+//         }
+//     },
+// ])

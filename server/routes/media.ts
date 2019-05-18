@@ -20,7 +20,7 @@ var storage = multer.diskStorage({
         let fileName = time + '' + randomNumber + 'ishanvi.' + file.mimetype.split('/')[1];
         let imagePath = path.join('/public/uploadFiles', fileName);
 
-        req.body.imagePath = path.join(CommonJsInstance.BASE_URL, imagePath);
+        req.body.imagePath = path.join(CommonJsInstance.BASE_URL, imagePath).replace('http:/13.127.188.164', 'http://13.127.188.164');
         cb(null, fileName);
     }
 });
