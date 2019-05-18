@@ -119,8 +119,8 @@ export class ProductOperations {
                                     "data": {
                                         title: productData && productData.name ? productData.name : "NA",
                                         description: productData && productData.description ? productData.description : "NA",
-                                        image: images && images.length ? "http:/13.127.188.164/public/uploadProductFiles/15437477174048544ishaanvi.png" : "",
-                                        productId: "5c03b87bff3b220805004dd9",
+                                        image: images && images.length ? images[0] : "",
+                                        productId: productData._id,
                                         notification_type: "product"
                                     }
                                 };
