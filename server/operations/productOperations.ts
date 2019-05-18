@@ -250,7 +250,7 @@ export class ProductOperations {
      */
     static editProductFiles(obj, cb) {
         Connection.connect((err, db, client) => {
-            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, { mongodb: err }, cb);
             else {
                 var products = db.collection('products');
                 const { id, itemCode, images, status } = obj;
