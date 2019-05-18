@@ -114,28 +114,32 @@ export class ProductOperations {
                         else if (productData && productData.length) {
                             productData = productData[0];
                             const deviceTokens = data && data.length ? data.map(ele => ele.userData.deviceToken) : []
-                            const message = {
-                                registration_ids: deviceTokens,
-                                "data": {
-                                    title: productData && productData.name ? productData.name : "NA",
-                                    description: productData && productData.description ? productData.description : "NA",
-                                    image: images && images.length ? "http:/13.127.188.164/public/uploadProductFiles/15437477174048544ishaanvi.png" : "",
-                                    productId: "5c03b87bff3b220805004dd9",
-                                    notification_type: "product"
-                                }
-                            };
+                            if (deviceTokens && deviceTokens.length) {
+                                const message = {
+                                    registration_ids: deviceTokens,
+                                    "data": {
+                                        title: productData && productData.name ? productData.name : "NA",
+                                        description: productData && productData.description ? productData.description : "NA",
+                                        image: images && images.length ? "http:/13.127.188.164/public/uploadProductFiles/15437477174048544ishaanvi.png" : "",
+                                        productId: "5c03b87bff3b220805004dd9",
+                                        notification_type: "product"
+                                    }
+                                };
 
-                            let that = this;
-                            console.log("Notification data ===> ", message);
-                            Operations.sendAddProductNotification(message, function (err, response) {
-                                console.log("Notification data ===> error", err, response);
-                                if (err) {
-                                    CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
-                                } else {
-                                    // CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
-                                    that.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
-                                }
-                            });
+                                let that = this;
+                                console.log("Notification data ===> ", message);
+                                Operations.sendAddProductNotification(message, function (err, response) {
+                                    console.log("Notification data ===> error", err, response);
+                                    if (err) {
+                                        CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                                    } else {
+                                        // CommonJs.close(client, CommonJSInstance.SUCCESS, response, cb);
+                                        that.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
+                                    }
+                                });
+                            } else {
+                                this.getCollectionData({ userId: new ObjectId(id), itemCode }, products, { projection: {} }, client, cb);
+                            }
                         } else CommonJs.close(client, CommonJSInstance.NOVALUE, { message: "No product found" }, cb);
                     });
                 }
