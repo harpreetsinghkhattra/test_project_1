@@ -53,6 +53,6 @@ module.exports = {
         getAllUsers: ["id", "accessToken"],
         getBlockedUsers: ["id", "accessToken"],
         getTotalUsersAndProducts: ["id", "accessToken"],
-        saveSurvey: ["id", "accessToken", "answers"],
+        saveSurvey: ["id", "accessToken", "answers", "surveyId"],
     }
 }

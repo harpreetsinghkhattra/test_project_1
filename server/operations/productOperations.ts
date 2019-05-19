@@ -1607,20 +1607,21 @@ export class ProductOperations {
             else {
                 var collection = db.collection('saveSurvey');
 
-                const { id, answers } = obj;
+                const { id, answers, surveyId } = obj;
 
-                collection.find({ userId: new ObjectId(id) }).toArray((err, data) => {
+                collection.find({ userId: new ObjectId(id), surveyId: new ObjectId(surveyId) }).toArray((err, data) => {
                     if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                     else if (data && data.length === 0) {
                         collection.insertOne({
                             userId: new ObjectId(id),
-                            answers: answers
+                            answers: answers, 
+                            surveyId: new ObjectId(surveyId)
                         }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                             else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
                         })
                     } else {
-                        collection.updateOne({ userId: new ObjectId(id) }, {
+                        collection.updateOne({ userId: new ObjectId(id), surveyId: new ObjectId(surveyId) }, {
                             $set: {
                                 answers: answers
                             }
