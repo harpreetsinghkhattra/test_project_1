@@ -15,6 +15,7 @@ module.exports = {
         editUser: ["user_name", "name", "bio", "dob", "user_img", "email", "mobile_number"],
         editProfileImage: ["id", "accessToken", "imagePath"],
         getUser: ["id", "accessToken"],
+        getSurvey: ["id", "accessToken"],
         addProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType"],
         editProduct: ["id", "accessToken", "name", "description", "category", "itemCode", "price", "discount", "size", "color", "material", "occasion", "type", "selectType", "status", "deletedStatus"],
         uploadProductFiles: ["id", "accessToken", "itemCode", "images", "status"],
@@ -51,6 +52,7 @@ module.exports = {
         blockUser: ["id", "accessToken", "userId"],
         getAllUsers: ["id", "accessToken"],
         getBlockedUsers: ["id", "accessToken"],
-        getTotalUsersAndProducts: ["id", "accessToken"]
+        getTotalUsersAndProducts: ["id", "accessToken"],
+        saveSurvey: ["id", "accessToken", "answers"],
     }
 }

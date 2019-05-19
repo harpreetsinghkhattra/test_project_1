@@ -1574,4 +1574,63 @@ export class ProductOperations {
             }
         });
     }
+
+    /**
+     * Get Added Survey
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static getSurvey(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('Survey');
+
+                const { id, accessToken, userId } = obj;
+
+                collection.find().toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else CommonJs.close(client, CommonJSInstance.SUCCESS, data && data.length ? data[0] : {}, cb);
+                })
+            }
+        });
+    }
+
+    /**
+     * Save Survey
+     * @param {*object} obj 
+     * @param {*function} cb 
+     */
+    static saveSurvey(obj, cb) {
+        Connection.connect((err, db, client) => {
+            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+            else {
+                var collection = db.collection('saveSurvey');
+
+                const { id, answers } = obj;
+
+                collection.find({ userId: new ObjectId(id) }).toArray((err, data) => {
+                    if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                    else if (data && data.length === 0) {
+                        collection.insertOne({
+                            userId: new ObjectId(id),
+                            answers: answers
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                        })
+                    } else {
+                        collection.updateOne({ userId: new ObjectId(id) }, {
+                            $set: {
+                                answers: answers
+                            }
+                        }, (err, data) => {
+                            if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
+                            else CommonJs.close(client, CommonJSInstance.SUCCESS, data, cb);
+                        })
+                    }
+                });
+            }
+        });
+    }
 }

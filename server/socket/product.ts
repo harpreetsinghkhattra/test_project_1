@@ -43,6 +43,8 @@ export class Product {
         this.getChatUsers();
         this.getAllNotifications();
         this.getAddedBannerLocation();
+        this.getSurvey();
+        this.saveSurvey();
     }
 
     /** Add product */
@@ -342,6 +344,30 @@ export class Product {
                         this.socket.emit('/socket/api/response/getAddedBannerLocation', CommonJs.socketResponse(status, response));
                     })
                 } else this.socket.emit('/socket/api/response/getAddedBannerLocation', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Get survey */
+    getSurvey() {
+        this.socket.on('/socket/api/getSurvey',
+            (data) => Auth.authUsingSocket('getSurvey', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.getSurvey(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/getSurvey', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/getSurvey', CommonJs.socketResponse(status, response));
+            }));
+    }
+
+    /** Save survey */
+    saveSurvey() {
+        this.socket.on('/socket/api/saveSurvey',
+            (data) => Auth.authUsingSocket('saveSurvey', data, (status, response) => {
+                if (status === CommonJsInstance.LOGED_IN) {
+                    ProductOperations.saveSurvey(data, (status, response) => {
+                        this.socket.emit('/socket/api/response/saveSurvey', CommonJs.socketResponse(status, response));
+                    })
+                } else this.socket.emit('/socket/api/response/saveSurvey', CommonJs.socketResponse(status, response));
             }));
     }
 }
