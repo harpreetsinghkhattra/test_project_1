@@ -120,7 +120,7 @@ export class ProductOperations {
                                         title: productData && productData.name ? productData.name : "NA",
                                         description: productData && productData.description ? productData.description : "NA",
                                         image: images && images.length ? images[0] : "",
-                                        productId: productData._id,
+                                        productId: productData._id.str,
                                         notification_type: "product"
                                     }
                                 };
