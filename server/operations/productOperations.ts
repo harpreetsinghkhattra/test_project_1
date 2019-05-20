@@ -112,7 +112,8 @@ export class ProductOperations {
                         if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
                         else if (productData && productData.length) {
                             productData = productData[0];
-                            const deviceTokens = data && data.length ? data.map(ele => ele.userData.deviceToken) : []
+                            const deviceTokens = data && data.length ? data.map(ele => ele.userData.deviceToken) : [];
+                            console.log(`${productData._id.str}`);
                             if (deviceTokens && deviceTokens.length) {
                                 const message = {
                                     registration_ids: deviceTokens,
@@ -120,7 +121,7 @@ export class ProductOperations {
                                         title: productData && productData.name ? productData.name : "NA",
                                         description: productData && productData.description ? productData.description : "NA",
                                         image: images && images.length ? images[0] : "",
-                                        productId: productData._id.str,
+                                        productId: `${productData._id.str}`,
                                         notification_type: "product"
                                     }
                                 };
@@ -1614,7 +1615,7 @@ export class ProductOperations {
                     else if (data && data.length === 0) {
                         collection.insertOne({
                             userId: new ObjectId(id),
-                            answers: answers, 
+                            answers: answers,
                             surveyId: new ObjectId(surveyId)
                         }, (err, data) => {
                             if (err) CommonJs.close(client, CommonJSInstance.ERROR, err, cb);
